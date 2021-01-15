@@ -5,3 +5,46 @@ download_data:
   - path: data/ranzcr-clip-catheter-line-classification.zip
     md5: f8a117e7ba1b5527c99c80b54beddeb5
     size: 12561354247
+unzip_train_img:
+  cmd: unzip data/ranzcr-clip-catheter-line-classification.zip 'train/*' -d 'data/'
+  deps:
+  - path: data/ranzcr-clip-catheter-line-classification.zip
+    md5: f8a117e7ba1b5527c99c80b54beddeb5
+    size: 12561354247
+  outs:
+  - path: data/train/
+    md5: 5571d6d885d1e550ac890552afb255f0.dir
+    size: 6912613778
+    nfiles: 30083
+unzip_test_img:
+  cmd: unzip data/ranzcr-clip-catheter-line-classification.zip 'test/*' -d 'data/'
+  deps:
+  - path: data/ranzcr-clip-catheter-line-classification.zip
+    md5: f8a117e7ba1b5527c99c80b54beddeb5
+    size: 12561354247
+  outs:
+  - path: data/test/
+    md5: 45cbe64f56a418f4d1abebd38c184175.dir
+    size: 844424034
+    nfiles: 3582
+unzip_train_labels:
+  cmd: unzip data/ranzcr-clip-catheter-line-classification.zip 'train.csv' -d 'data/'
+  deps:
+  - path: data/ranzcr-clip-catheter-line-classification.zip
+    md5: f8a117e7ba1b5527c99c80b54beddeb5
+    size: 12561354247
+  outs:
+  - path: data/train.csv
+    md5: f9305cb1f8dbb233c78385f20ab3ae72
+    size: 2918266
+unzip_train_annotations:
+  cmd: unzip data/ranzcr-clip-catheter-line-classification.zip 'train_annotations.csv'
+    -d 'data/'
+  deps:
+  - path: data/ranzcr-clip-catheter-line-classification.zip
+    md5: f8a117e7ba1b5527c99c80b54beddeb5
+    size: 12561354247
+  outs:
+  - path: data/train_annotations.csv
+    md5: 00ad55b088b2f81c756a6b21bc8f2562
+    size: 4950273

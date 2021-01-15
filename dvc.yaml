@@ -4,3 +4,28 @@ stages:
       -p data/
     outs:
     - data/ranzcr-clip-catheter-line-classification.zip
+  unzip_train_img:
+    cmd: unzip data/ranzcr-clip-catheter-line-classification.zip 'train/*' -d 'data/'
+    deps:
+    - data/ranzcr-clip-catheter-line-classification.zip
+    outs:
+    - data/train/
+  unzip_test_img:
+    cmd: unzip data/ranzcr-clip-catheter-line-classification.zip 'test/*' -d 'data/'
+    deps:
+    - data/ranzcr-clip-catheter-line-classification.zip
+    outs:
+    - data/test/
+  unzip_train_labels:
+    cmd: unzip data/ranzcr-clip-catheter-line-classification.zip 'train.csv' -d 'data/'
+    deps:
+    - data/ranzcr-clip-catheter-line-classification.zip
+    outs:
+    - data/train.csv
+  unzip_train_annotations:
+    cmd: unzip data/ranzcr-clip-catheter-line-classification.zip 'train_annotations.csv'
+      -d 'data/'
+    deps:
+    - data/ranzcr-clip-catheter-line-classification.zip
+    outs:
+    - data/train_annotations.csv
