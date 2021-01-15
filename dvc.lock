@@ -48,3 +48,16 @@ unzip_train_annotations:
   - path: data/train_annotations.csv
     md5: 00ad55b088b2f81c756a6b21bc8f2562
     size: 4950273
+split_train_val:
+  cmd: python pipe/split.py
+  deps:
+  - path: data/train.csv
+    md5: f9305cb1f8dbb233c78385f20ab3ae72
+    size: 2918266
+  - path: pipe/split.py
+    md5: 0782d125f307f86948ba7b50f76fbf42
+    size: 538
+  outs:
+  - path: data/train_folds.csv
+    md5: 6329e4e3fc26bfe6b458648a76c42d9b
+    size: 2978438
