@@ -1,0 +1,6 @@
+stages:
+  download_data:
+    cmd: kaggle competitions download -c ranzcr-clip-catheter-line-classification
+      -p data/
+    outs:
+    - data/ranzcr-clip-catheter-line-classification.zip

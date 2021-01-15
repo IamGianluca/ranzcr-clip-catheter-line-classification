@@ -1,0 +1,7 @@
+download_data:
+  cmd: kaggle competitions download -c ranzcr-clip-catheter-line-classification -p
+    data/
+  outs:
+  - path: data/ranzcr-clip-catheter-line-classification.zip
+    md5: f8a117e7ba1b5527c99c80b54beddeb5
+    size: 12561354247
