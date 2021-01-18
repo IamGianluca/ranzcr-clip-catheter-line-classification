@@ -41,3 +41,11 @@ stages:
     - pipe/split.py
     outs:
     - data/train_folds.csv
+  train_model_one:
+    cmd: python pipe/train.py
+    deps:
+    - data/train_folds.csv
+    - pipe/train.py
+    metrics:
+    - metrics/model_one_cv.metric:
+        cache: false
