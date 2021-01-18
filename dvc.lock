@@ -55,9 +55,9 @@ split_train_val:
     md5: f9305cb1f8dbb233c78385f20ab3ae72
     size: 2918266
   - path: pipe/split.py
-    md5: 0782d125f307f86948ba7b50f76fbf42
-    size: 538
+    md5: 76e8df90c08731ba3249f597835bc75b
+    size: 460
   outs:
   - path: data/train_folds.csv
-    md5: 6329e4e3fc26bfe6b458648a76c42d9b
+    md5: d255ad605df66886ef9a122dc3d05926
     size: 2978438
