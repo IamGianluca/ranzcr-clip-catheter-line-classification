@@ -61,3 +61,16 @@ split_train_val:
   - path: data/train_folds.csv
     md5: d255ad605df66886ef9a122dc3d05926
     size: 2978438
+train_model_one:
+  cmd: python pipe/train.py
+  deps:
+  - path: data/train_folds.csv
+    md5: d255ad605df66886ef9a122dc3d05926
+    size: 2978438
+  - path: pipe/train.py
+    md5: b9835f18099b2343d5e43d9503bcb9ea
+    size: 828
+  outs:
+  - path: metrics/model_one_cv.metric
+    md5: b832678ab15c3e1bc10ad25e37678be5
+    size: 10
