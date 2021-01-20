@@ -3,8 +3,8 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import pytorch_lightning as pl
-from torch.utils.data import DataLoader, Dataset
 from PIL import Image
+from torch.utils.data import DataLoader, Dataset
 
 
 class ImageDataset(Dataset):
