@@ -35,10 +35,10 @@ stages:
     - data/train_annotations.csv
     frozen: true
   split_train_val:
-    cmd: python pipe/split.py
+    cmd: python pipe/create_folds.py
     deps:
     - data/train.csv
-    - pipe/split.py
+    - pipe/create_folds.py
     outs:
     - data/train_folds.csv
   train_model_one:
