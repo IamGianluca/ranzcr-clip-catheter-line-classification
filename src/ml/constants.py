@@ -1,6 +1,5 @@
 from pathlib import Path
 
-
 path = Path("/home/gianluca/git/kaggle/ranzcr/")
 
 data_path = path / "data"

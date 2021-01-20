@@ -114,6 +114,7 @@ dependencies:
   - fastrlock=0.5=py37hcd2ae1e_2
   - ffmpeg=4.3.1=hca11adc_2
   - fiona=1.8.13=py37h0492a4a_1
+  - flake8=3.8.4=py_0
   - flatten-dict=0.3.0=pyh9f0ad1d_0
   - flufl.lock=3.2=py_0
   - fontconfig=2.13.1=hba837de_1004
@@ -176,6 +177,7 @@ dependencies:
   - ipython_genutils=0.2.0=py_1
   - ipywidgets=7.6.3=pyhd3deb0d_0
   - isodate=0.6.0=py_1
+  - isort=5.7.0=pyhd8ed1ab_0
   - jasper=1.900.1=h07fcdf6_1006
   - jedi=0.18.0=py37h89c1867_2
   - jinja2=2.11.2=pyh9f0ad1d_0
@@ -274,6 +276,7 @@ dependencies:
   - markupsafe=1.1.1=py37h5e8e339_3
   - matplotlib=3.3.3=py37h89c1867_0
   - matplotlib-base=3.3.3=py37h0c9df89_0
+  - mccabe=0.6.1=py_1
   - mistune=0.8.4=py37h5e8e339_1003
   - mkl=2020.4=h726a3e6_304
   - msgpack-python=1.0.2=py37h2527ec5_1
@@ -347,6 +350,7 @@ dependencies:
   - pyarrow=1.0.1=py37hbeecfa9_14_cuda
   - pyasn1=0.4.8=py_0
   - pyasn1-modules=0.2.7=py_0
+  - pycodestyle=2.6.0=pyh9f0ad1d_0
   - pycparser=2.20=pyh9f0ad1d_2
   - pycryptodome=3.9.9=py37ha6ede69_1
   - pyct=0.4.6=py_0
@@ -355,6 +359,7 @@ dependencies:
   - pydot=1.4.1=py37h89c1867_1003
   - pydrive2=1.7.0=pyhd3deb0d_0
   - pyee=8.1.0=pyh9f0ad1d_0
+  - pyflakes=2.2.0=pyh9f0ad1d_0
   - pygments=2.7.4=pyhd8ed1ab_0
   - pygtrie=2.3.2=pyh8c360ce_0
   - pyhive=0.6.2=pyh9f0ad1d_0
