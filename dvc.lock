@@ -49,23 +49,23 @@ unzip_train_annotations:
     md5: 00ad55b088b2f81c756a6b21bc8f2562
     size: 4950273
 split_train_val:
-  cmd: python pipe/split.py
+  cmd: python pipe/create_folds.py
   deps:
   - path: data/train.csv
     md5: f9305cb1f8dbb233c78385f20ab3ae72
     size: 2918266
-  - path: pipe/split.py
+  - path: pipe/create_folds.py
     md5: 92e73293c70e481902e285cc2beb1b2c
     size: 464
   outs:
   - path: data/train_folds.csv
-    md5: f391982590499a4a36d0d932bb699a7e
+    md5: 3181ed39d35d9e2ac604f892f662c996
     size: 2978438
 train_model_one:
   cmd: python pipe/train.py
   deps:
   - path: data/train_folds.csv
-    md5: f391982590499a4a36d0d932bb699a7e
+    md5: 3181ed39d35d9e2ac604f892f662c996
     size: 2978438
   - path: pipe/train.py
     md5: 048befb8df64b4d7a2dadda892e91bba
