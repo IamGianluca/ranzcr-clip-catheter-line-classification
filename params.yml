@@ -1,0 +1,12 @@
+create_folds:
+  folds: 5
+
+train_resnet_18:
+  epochs: 5
+  arch: "resnet18"
+  precision: 16
+  sz: 128
+  bs: 512
+  lr: 0.02
+  wd: 0.02
+  mom: 0.9
