@@ -1,5 +1,7 @@
+from pathlib import Path
 from typing import List
 
+import pandas as pd
 import pytorch_lightning as pl
 import torch
 import torchvision.models as models
@@ -11,10 +13,21 @@ from .optim import optimizer_factory
 
 
 class LitClassifier(pl.LightningModule):
-    def __init__(self, in_channels: int, num_classes: int, **kwargs) -> None:
+    def __init__(
+        self,
+        in_channels: int,
+        num_classes: int,
+        target_cols: List[str],
+        sample_submission_fpath: Path,
+        submission_fpath: Path,
+        **kwargs,
+    ) -> None:
         super().__init__()
         self.save_hyperparameters()
 
+        # TODO: create model factory and incapsulate changes required to
+        # work with inputs of different in_channels, num_classes,
+        # non-linearity, etc.
         self.model = models.__dict__[self.hparams.arch](pretrained=True)
 
         # input has only 1 channel (black-white images) instead of RGB
@@ -34,6 +47,19 @@ class LitClassifier(pl.LightningModule):
     def forward(self, x):
         x = self.model(torch.as_tensor(data=x, dtype=torch.float32))
         return x
+
+    def configure_optimizers(self):
+        opt = optimizer_factory(
+            name=self.hparams.opt, parameters=self.parameters()
+        )
+        return opt
+
+    def loss_function(self, y_pred, y_true):
+        y_true = y_true.float()  # TODO: find a way to avoid this
+
+        loss_fn = loss_factory(name=self.hparams.loss)
+        loss = loss_fn(y_pred, y_true.view(-1))
+        return loss
 
     def training_step(self, batch, batch_idx):
         x_train, y_train = batch
@@ -101,15 +127,14 @@ class LitClassifier(pl.LightningModule):
         self.log("valid_loss", valid_loss)
         self.log("valid_metric", valid_metric)
 
-    def configure_optimizers(self):
-        opt = optimizer_factory(
-            name=self.hparams.opt, parameters=self.parameters()
-        )
-        return opt
+    def test_step(self, batch, batch_idx):
+        x_test = batch
+        y_pred = self(x_test)
+        return {"y_pred": y_pred}
 
-    def loss_function(self, y_pred, y_true):
-        y_true = y_true.float()  # TODO: find a way to avoid this
+    def test_epoch_end(self, outputs):
+        y_pred = torch.cat([out["y_pred"] for out in outputs])
 
-        loss_fn = loss_factory(name=self.hparams.loss)
-        loss = loss_fn(y_pred, y_true.view(-1))
-        return loss
+        submission = pd.read_csv(self.hparams.sample_submission_fpath)
+        submission[self.hparams.target_cols] = y_pred.detach().cpu().numpy()
+        submission.to_csv(self.hparams.submission_fpath, index=False)

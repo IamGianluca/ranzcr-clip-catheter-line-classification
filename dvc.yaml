@@ -1,51 +1,81 @@
 stages:
   download_data:
-    cmd: kaggle competitions download -c ranzcr-clip-catheter-line-classification
+    cmd:
+      kaggle competitions download -c ranzcr-clip-catheter-line-classification
       -p data/
     outs:
-    - data/ranzcr-clip-catheter-line-classification.zip
+      - data/ranzcr-clip-catheter-line-classification.zip
     frozen: true
   unzip_train_img:
     cmd: unzip data/ranzcr-clip-catheter-line-classification.zip 'train/*' -d 'data/'
     deps:
-    - data/ranzcr-clip-catheter-line-classification.zip
+      - data/ranzcr-clip-catheter-line-classification.zip
     outs:
-    - data/train/
+      - data/train/
     frozen: true
   unzip_test_img:
     cmd: unzip data/ranzcr-clip-catheter-line-classification.zip 'test/*' -d 'data/'
     deps:
-    - data/ranzcr-clip-catheter-line-classification.zip
+      - data/ranzcr-clip-catheter-line-classification.zip
     outs:
-    - data/test/
+      - data/test/
     frozen: true
   unzip_train_labels:
     cmd: unzip data/ranzcr-clip-catheter-line-classification.zip 'train.csv' -d 'data/'
     deps:
-    - data/ranzcr-clip-catheter-line-classification.zip
+      - data/ranzcr-clip-catheter-line-classification.zip
     outs:
-    - data/train.csv
+      - data/train.csv
     frozen: true
   unzip_train_annotations:
-    cmd: unzip data/ranzcr-clip-catheter-line-classification.zip 'train_annotations.csv'
+    cmd:
+      unzip data/ranzcr-clip-catheter-line-classification.zip 'train_annotations.csv'
       -d 'data/'
     deps:
-    - data/ranzcr-clip-catheter-line-classification.zip
+      - data/ranzcr-clip-catheter-line-classification.zip
     outs:
-    - data/train_annotations.csv
+      - data/train_annotations.csv
     frozen: true
+  unzip_sample_submission:
+    cmd:
+      unzip data/ranzcr-clip-catheter-line-classification.zip 'sample_submission.csv'
+      -d 'data/'
+    deps:
+      - data/ranzcr-clip-catheter-line-classification.zip
+    outs:
+      - data/sample_submission.csv
+    frozen: true
+  resize_images:
+    cmd: python pipe/resize_images.py
+    deps:
+      - data/train/
+      - data/test/
+    outs:
+      - data/train_128/
+      - data/train_192/
+      - data/train_256/
+      - data/train_384/
+      - data/train_512/
+      - data/train_768/
+      - data/train_1024/
+      - data/test_128/
+      - data/test_192/
+      - data/test_256/
+      - data/test_384/
+      - data/test_512/
+      - data/test_768/
+      - data/test_1024/
   split_train_val:
     cmd: python pipe/create_folds.py
     deps:
-    - data/train.csv
-    - pipe/create_folds.py
+      - data/train.csv
+      - pipe/create_folds.py
     outs:
-    - data/train_folds.csv
+      - data/train_folds.csv
   train_model_one:
-    cmd: python pipe/train.py
+    cmd: python pipe/train.py --fold 0
     deps:
-    - data/train_folds.csv
-    - pipe/train.py
-    metrics:
-    - metrics/model_one_cv.metric:
-        cache: false
+      - data/train_folds.csv
+      - pipe/train.py
+    outs:
+      - subs/oof/submission_0.csv
