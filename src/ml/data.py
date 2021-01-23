@@ -29,7 +29,7 @@ class ImageDataset(Dataset):
             return image
 
 
-class RazncrDataModule(pl.LightningDataModule):
+class LitDataModule(pl.LightningDataModule):
     def __init__(
         self,
         data_path: Path,
@@ -56,16 +56,18 @@ class RazncrDataModule(pl.LightningDataModule):
         df_train = df[df.kfold != self.fold]
         df_valid = df[df.kfold == self.fold]
 
+        # TODO: we should pass the path(s) as an argument to the LitClassifier
+        # constructor. In this way, this class will be more generalizable
         train_image_paths = [
-            self.data_path / f"train/{x}.jpg"
+            self.data_path / f"train_128/{x}.jpg"
             for x in df_train.StudyInstanceUID.values
         ]
         valid_image_paths = [
-            self.data_path / f"train/{x}.jpg"
+            self.data_path / f"train_128/{x}.jpg"
             for x in df_valid.StudyInstanceUID.values
         ]
         test_image_paths = [
-            x for x in (self.data_path / "test").iterdir() if x.is_file()
+            x for x in (self.data_path / "test_128").iterdir() if x.is_file()
         ]
 
         train_targets = df_train.loc[:, target_cols].values
@@ -87,15 +89,27 @@ class RazncrDataModule(pl.LightningDataModule):
 
     def train_dataloader(self):
         return DataLoader(
-            self.train_ds, batch_size=self.batch_size, num_workers=12
+            self.train_ds,
+            batch_size=self.batch_size,
+            shuffle=True,
+            num_workers=12,
+            drop_last=True,
         )
 
     def val_dataloader(self):
         return DataLoader(
-            self.valid_ds, batch_size=self.batch_size, num_workers=12
+            self.valid_ds,
+            batch_size=self.batch_size,
+            shuffle=False,
+            num_workers=12,
+            drop_last=False,
         )
 
     def test_dataloader(self):
         return DataLoader(
-            self.test_ds, batch_size=self.batch_size, num_workers=12
+            self.test_ds,
+            batch_size=self.batch_size,
+            shuffle=False,
+            num_workers=12,
+            drop_last=False,
         )

@@ -1,15 +1,16 @@
 import argparse
 
 import albumentations.augmentations.transforms as A
+from pipe import constants
 import pytorch_lightning as pl
 from albumentations.core import composition
 from albumentations.pytorch import transforms
 from pytorch_lightning.core.saving import load_hparams_from_yaml
 
-from ml import classification, constants, data, utils
+from ml import classification, data, utils
 
 
-def run(fold, verbose: bool = False):
+def run(fold: int, verbose: bool = False):
     target_cols = [
         "ETT - Abnormal",
         "ETT - Borderline",
@@ -38,7 +39,7 @@ def run(fold, verbose: bool = False):
         [A.Resize(hparams.sz, hparams.sz), transforms.ToTensorV2()]
     )
 
-    dm = data.RazncrDataModule(
+    dm = data.LitDataModule(
         data_path=constants.data_path,
         batch_size=hparams.bs,
         fold=fold,
@@ -48,28 +49,24 @@ def run(fold, verbose: bool = False):
     )
     dm.setup()
 
+    sample_submission_fpath = constants.data_path / "sample_submission.csv"
+    submission_fpath = (
+        constants.submissions_path / f"oof/submission_{fold}.csv"
+    )
+
     model = classification.LitClassifier(
-        in_channels=1, num_classes=len(target_cols), **vars(hparams)
+        target_cols=target_cols,
+        sample_submission_fpath=sample_submission_fpath,
+        submission_fpath=submission_fpath,
+        in_channels=1,
+        num_classes=len(target_cols),
+        **vars(hparams),
     )
     trainer = pl.Trainer(gpus=1, max_epochs=hparams.epochs)
     trainer.fit(model, dm)
 
     # create predictions for validation samples
     trainer.test(datamodule=dm)
-    # y_pred = clf.predict(x_valid)
-
-    # # calculate and print evaluation metric
-    # cv_score = metrics.roc_auc_score(
-    #     y_true=y_valid, y_score=y_pred, average="macro"
-    # )
-    # message = f"Fold={fold}, AUC: {cv_score:.3f}"
-    # print(message)
-
-    # with open(constants.metrics_path / "model_one_cv.metric", "w") as f:
-    #     f.write(message)
-
-    # # save the model
-    # joblib.dump(clf, constants.models_path / f"dt{model}_{fold}.bin")
 
 
 if __name__ == "__main__":
