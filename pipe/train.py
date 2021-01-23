@@ -1,24 +1,15 @@
 import argparse
 
-import numpy as np
-import joblib
-import pandas as pd
+import albumentations.augmentations.transforms as A
 import pytorch_lightning as pl
 from albumentations.core import composition
-import albumentations.augmentations.transforms as A
 from albumentations.pytorch import transforms
 from pytorch_lightning.core.saving import load_hparams_from_yaml
 
-from ml import constants
-from ml import data
-from ml import classification
-from ml import utils
+from ml import classification, constants, data, utils
 
 
 def run(fold, verbose: bool = False):
-    df = pd.read_csv(constants.data_path / "train_folds.csv")
-
-    # organize feature names in lists we can reuse later on
     target_cols = [
         "ETT - Abnormal",
         "ETT - Borderline",
@@ -32,11 +23,6 @@ def run(fold, verbose: bool = False):
         "CVC - Normal",
         "Swan Ganz Catheter Present",
     ]
-
-    # training data is where kfold is not equal to provided fold
-    # also, note we reset the index
-    df_train = df[df.kfold != fold].reset_index(drop=True)
-    df_valid = df[df.kfold == fold].reset_index(drop=True)
 
     # drop the label column(s) from dataframe and convert it to a numpy array
     params = load_hparams_from_yaml(constants.params_fpath)
@@ -65,7 +51,7 @@ def run(fold, verbose: bool = False):
     model = classification.LitClassifier(
         in_channels=1, num_classes=len(target_cols), hparams=hparams
     )
-    trainer = pl.Trainer(gpus=1, max_epochs=2)
+    trainer = pl.Trainer(gpus=1, max_epochs=hparams.epochs)
     trainer.fit(model, dm)
 
     # create predictions for validation samples

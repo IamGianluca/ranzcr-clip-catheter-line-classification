@@ -4,6 +4,7 @@ create_folds:
 train_resnet_18:
   epochs: 5
   arch: "resnet18"
+  metric: "multilabel_auc_macro"
   opt: "adam"
   loss: "bce_with_logits"
   precision: 16
