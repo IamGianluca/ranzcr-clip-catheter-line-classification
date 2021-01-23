@@ -4,6 +4,8 @@ create_folds:
 train_resnet_18:
   epochs: 5
   arch: "resnet18"
+  opt: "adam"
+  loss: "bce_with_logits"
   precision: 16
   sz: 128
   bs: 512
