@@ -49,7 +49,7 @@ def run(fold, verbose: bool = False):
     dm.setup()
 
     model = classification.LitClassifier(
-        in_channels=1, num_classes=len(target_cols), hparams=hparams
+        in_channels=1, num_classes=len(target_cols), **vars(hparams)
     )
     trainer = pl.Trainer(gpus=1, max_epochs=hparams.epochs)
     trainer.fit(model, dm)

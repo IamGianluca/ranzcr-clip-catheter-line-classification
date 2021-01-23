@@ -1,7 +1,7 @@
 import torch
 
 
-def optimizer_factory(name, parameters):
+def optimizer_factory(name: str, parameters):
     if name == "adam":
         return torch.optim.Adam(parameters)
     else:
