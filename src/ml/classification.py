@@ -5,6 +5,9 @@ from torch import nn
 import pytorch_lightning as pl
 import torchvision.models as models
 
+from .loss import loss_factory
+from .optim import optimizer_factory
+
 
 class LitClassifier(pl.LightningModule):
     def __init__(self, in_channels: int, num_classes: int, hparams) -> 0:
@@ -55,10 +58,14 @@ class LitClassifier(pl.LightningModule):
         self.log("train_auc", train_auc)
 
     def configure_optimizers(self):
-        return torch.optim.Adam(self.parameters(), lr=self.hparams.lr)
+        opt = optimizer_factory(
+            name=self.hparams.opt, parameters=self.parameters()
+        )
+        return opt
 
     def loss_function(self, y_pred, y_true):
-        y_true = y_true.float()
-        loss_fn = nn.BCEWithLogitsLoss()
+        y_true = y_true.float()  # TODO: find a way to avoid this
+
+        loss_fn = loss_factory(name=self.hparams.loss)
         loss = loss_fn(y_pred, y_true.view(-1))
         return loss
