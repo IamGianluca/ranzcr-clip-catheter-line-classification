@@ -11,17 +11,15 @@ from .optim import optimizer_factory
 
 
 class LitClassifier(pl.LightningModule):
-    def __init__(self, in_channels: int, num_classes: int, hparams) -> 0:
+    def __init__(self, in_channels: int, num_classes: int, **kwargs) -> None:
         super().__init__()
-        self.in_channels = in_channels
-        self.num_classes = num_classes
-        self.hparams = hparams
+        self.save_hyperparameters()
 
         self.model = models.__dict__[self.hparams.arch](pretrained=True)
 
         # input has only 1 channel (black-white images) instead of RGB
         self.model.conv1 = nn.Conv2d(
-            self.in_channels,
+            self.hparams.in_channels,
             64,
             kernel_size=7,
             stride=2,
@@ -31,7 +29,7 @@ class LitClassifier(pl.LightningModule):
 
         # output for multi-class/multi-label classification problem
         in_features = self.model.fc.in_features
-        self.model.fc = nn.Linear(in_features, self.num_classes)
+        self.model.fc = nn.Linear(in_features, self.hparams.num_classes)
 
     def forward(self, x):
         x = self.model(torch.as_tensor(data=x, dtype=torch.float32))

@@ -5,7 +5,7 @@ import torchvision.utils as utils
 from torch.utils.data import DataLoader
 
 
-def dict_to_args(d):
+def dict_to_args(d: dict):
 
     args = argparse.Namespace()
 
