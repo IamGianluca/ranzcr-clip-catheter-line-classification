@@ -1,15 +1,15 @@
 create_folds:
   folds: 5
 
-train_resnet_18:
-  epochs: 1
+train_resnet18_128:
+  epochs: 20
   arch: "resnet18"
   metric: "multilabel_auc_macro"
   opt: "adam"
   loss: "bce_with_logits"
   precision: 16
   sz: 128
-  bs: 512
+  bs: 1024
   lr: 0.02
   wd: 0.02
   mom: 0.9

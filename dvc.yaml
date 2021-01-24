@@ -79,3 +79,5 @@ stages:
       - pipe/train.py
     outs:
       - subs/oof/submission_0.csv
+    params:
+      - train_resnet18_128

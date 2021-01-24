@@ -6,6 +6,7 @@ import pytorch_lightning as pl
 import torch
 import torchvision.models as models
 from torch import nn
+from torch.optim.lr_scheduler import ReduceLROnPlateau
 
 from .loss import loss_factory
 from .metrics import metric_factory
@@ -49,10 +50,18 @@ class LitClassifier(pl.LightningModule):
         return x
 
     def configure_optimizers(self):
-        opt = optimizer_factory(
+        config = dict()
+        optimizer = optimizer_factory(
             name=self.hparams.opt, parameters=self.parameters()
         )
-        return opt
+        config["optimizer"] = optimizer
+
+        if False:
+            config["lr_scheduler"] = ReduceLROnPlateau(
+                optimizer, mode="min", patience=3, verbose=True
+            )
+            config["monitor"] = "valid_metric"
+        return config
 
     def loss_function(self, y_pred, y_true):
         y_true = y_true.float()  # TODO: find a way to avoid this
@@ -91,8 +100,6 @@ class LitClassifier(pl.LightningModule):
                 y_pred=y_pred.detach().cpu().numpy(),
             )
 
-        print(f"\nTrain metric: {train_metric}")
-
         self.log("train_loss", train_loss)
         self.log("train_metric", train_metric)
 
@@ -122,9 +129,18 @@ class LitClassifier(pl.LightningModule):
                 y_pred=y_pred.detach().cpu().numpy(),
             )
 
-        print(f"\nValid metric: {valid_metric}")
+        if self.current_epoch >= 1:
+            train_loss = self.trainer.callback_metrics["train_loss"]
+            train_metric = self.trainer.callback_metrics["train_metric"]
 
-        self.log("valid_loss", valid_loss)
+            self.trainer.progress_bar_callback.main_progress_bar.write(
+                f"Epoch {self.current_epoch} // train loss: {train_loss:.4f}, train metric: {train_metric:.4f}, valid loss: {valid_loss:.4f}, valid metric: {valid_metric:.4f}"
+            )
+
+        self.log(
+            "valid_loss",
+            valid_loss,
+        )
         self.log("valid_metric", valid_metric)
 
     def test_step(self, batch, batch_idx):

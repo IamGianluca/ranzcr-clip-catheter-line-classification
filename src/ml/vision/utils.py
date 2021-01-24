@@ -33,7 +33,7 @@ def resize_image_and_pad_if_needed(img: Image, sz: int):
     # TODO: check if this works propery for both RGB and black-white images
     # TODO: test bilinear vs other options
     if img.size[0] > sz or img.size[1] > sz:
-        resized_img = img.resize((sz, sz))
+        resized_img = img.resize((sz, sz), resample=Image.LANCZOS)
     else:
         resized_img = Image.new("RGB", (sz, sz))
         resized_img.paste(img, (0, 0))
