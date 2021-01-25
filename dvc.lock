@@ -48,24 +48,24 @@ unzip_train_annotations:
   - path: data/train_annotations.csv
     md5: 00ad55b088b2f81c756a6b21bc8f2562
     size: 4950273
-split_train_val:
+create_folds:
   cmd: python pipe/create_folds.py
   deps:
   - path: data/train.csv
     md5: f9305cb1f8dbb233c78385f20ab3ae72
     size: 2918266
   - path: pipe/create_folds.py
-    md5: f32864389784841c38f96fca47ee40b3
-    size: 465
+    md5: 388c48dce05c003baa66814be118e357
+    size: 723
   outs:
   - path: data/train_folds.csv
-    md5: 3f2d4a323b97686498121b97034dedb3
+    md5: c0a7355a820dd5f371ba3ffb54eeecd0
     size: 2978438
 train_model_one:
   cmd: python pipe/train.py --fold 0
   deps:
   - path: data/train_folds.csv
-    md5: 3f2d4a323b97686498121b97034dedb3
+    md5: c0a7355a820dd5f371ba3ffb54eeecd0
     size: 2978438
   - path: pipe/train.py
     md5: df7297445e8b35e562d5b7d0787b8c88
@@ -86,8 +86,8 @@ train_model_one:
         mom: 0.9
   outs:
   - path: subs/oof/submission_0.csv
-    md5: cf9e01460b42941e1e7bb8710e60d6c3
-    size: 989890
+    md5: 7124b9a81cfcc3b886eb39b70984f026
+    size: 988353
 unzip_sample_submission:
   cmd: unzip data/ranzcr-clip-catheter-line-classification.zip 'sample_submission.csv'
     -d 'data/'
