@@ -68,8 +68,8 @@ train_model_one:
     md5: c0a7355a820dd5f371ba3ffb54eeecd0
     size: 2978438
   - path: pipe/train.py
-    md5: df7297445e8b35e562d5b7d0787b8c88
-    size: 3637
+    md5: 95bc9b2ef6535e246e3addd4a3942f8f
+    size: 4001
   params:
     params.yaml:
       train_resnet18_128:
@@ -85,9 +85,12 @@ train_model_one:
         wd: 0.02
         mom: 0.9
   outs:
-  - path: subs/oof/submission_0.csv
-    md5: 437be3a9788ac9001ca41f8da6f2b07f
-    size: 987124
+  - path: models/arch=resnet18_sz=128_fold=0.ckpt
+    md5: 4e8bf53ecdc93a6ba660e27b3417f9ae
+    size: 44787129
+  - path: subs/oof/arch=resnet18_sz=128_fold=0.csv
+    md5: f5bbdb7c829fe4e5ee0ed1f16ebefc00
+    size: 985741
 unzip_sample_submission:
   cmd: unzip data/ranzcr-clip-catheter-line-classification.zip 'sample_submission.csv'
     -d 'data/'

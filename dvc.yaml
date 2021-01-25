@@ -78,6 +78,7 @@ stages:
       - data/train_folds.csv
       - pipe/train.py
     outs:
-      - subs/oof/submission_0.csv
+      - subs/oof/arch=resnet18_sz=128_fold=0.csv
+      - models/arch=resnet18_sz=128_fold=0.ckpt
     params:
       - train_resnet18_128

@@ -3,11 +3,13 @@ import argparse
 import albumentations.augmentations.transforms as A
 from albumentations.core.composition import OneOf
 from numpy.lib.function_base import kaiser
+from pytorch_lightning import callbacks
 from pipe import constants
 import pytorch_lightning as pl
 import albumentations
 from albumentations.pytorch import transforms
 from pytorch_lightning.core.saving import load_hparams_from_yaml
+from pytorch_lightning.callbacks import ModelCheckpoint
 
 from ml import classification, data, utils
 
@@ -35,9 +37,6 @@ def run(fold: int, verbose: bool = False):
     std = 0.2295
     train_augmentation = albumentations.Compose(
         [
-            albumentations.Normalize(
-                mean, std, max_pixel_value=255.0, always_apply=True
-            ),
             albumentations.ShiftScaleRotate(
                 shift_limit=0.0625, scale_limit=0.1, rotate_limit=10, p=0.8
             ),
@@ -49,6 +48,9 @@ def run(fold: int, verbose: bool = False):
                     ),
                 ],
                 p=0.5,
+            ),
+            albumentations.Normalize(
+                mean, std, max_pixel_value=255.0, always_apply=True
             ),
             transforms.ToTensorV2(),
         ]
@@ -87,7 +89,8 @@ def run(fold: int, verbose: bool = False):
 
     sample_submission_fpath = constants.data_path / "sample_submission.csv"
     submission_fpath = (
-        constants.submissions_path / f"oof/submission_{fold}.csv"
+        constants.submissions_path
+        / f"oof/arch={hparams.arch}_sz={hparams.sz}_fold={fold}.csv"
     )
 
     model = classification.LitClassifier(
@@ -98,13 +101,23 @@ def run(fold: int, verbose: bool = False):
         num_classes=len(target_cols),
         **vars(hparams),
     )
-    if True:
-        trainer = pl.Trainer(gpus=1, max_epochs=hparams.epochs)
-    else:
-        # find optimal lr
-        trainer = pl.Trainer(
-            gpus=1, auto_lr_find=True, max_epochs=hparams.epochs
-        )
+
+    checkpoint_callback = ModelCheckpoint(
+        monitor="valid_metric",
+        mode="max",
+        dirpath=constants.models_path,
+        filename=f"arch={hparams.arch}_sz={hparams.sz}_fold={fold}",
+        save_weights_only=True,
+    )
+
+    auto_lr_find = False
+    trainer = pl.Trainer(
+        gpus=1,
+        auto_lr_find=auto_lr_find,
+        max_epochs=hparams.epochs,
+        callbacks=[checkpoint_callback],
+    )
+    if auto_lr_find:
         trainer.tune(model, dm)
 
     trainer.fit(model, dm)
