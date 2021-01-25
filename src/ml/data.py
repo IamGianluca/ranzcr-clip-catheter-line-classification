@@ -3,8 +3,12 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import pytorch_lightning as pl
-from PIL import Image
+from PIL import Image, ImageFile
 from torch.utils.data import DataLoader, Dataset
+
+# sometimes, you will have images without an ending bit; this
+# takes care of those kind of (corrupt) images
+ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 
 class ImageDataset(Dataset):
@@ -93,6 +97,7 @@ class LitDataModule(pl.LightningDataModule):
             batch_size=self.batch_size,
             shuffle=True,
             num_workers=12,
+            pin_memory=True,
             drop_last=True,
         )
 

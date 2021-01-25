@@ -59,21 +59,35 @@ split_train_val:
     size: 465
   outs:
   - path: data/train_folds.csv
-    md5: 57534faf9d2e8ce045796a4c447cd7f1
+    md5: 3f2d4a323b97686498121b97034dedb3
     size: 2978438
 train_model_one:
   cmd: python pipe/train.py --fold 0
   deps:
   - path: data/train_folds.csv
-    md5: 57534faf9d2e8ce045796a4c447cd7f1
+    md5: 3f2d4a323b97686498121b97034dedb3
     size: 2978438
   - path: pipe/train.py
-    md5: ce13f9faa7727a9eafd63a9f54ec81e8
-    size: 2394
+    md5: df7297445e8b35e562d5b7d0787b8c88
+    size: 3637
+  params:
+    params.yaml:
+      train_resnet18_128:
+        epochs: 20
+        arch: resnet18
+        metric: multilabel_auc_macro
+        opt: adam
+        loss: bce_with_logits
+        precision: 16
+        sz: 128
+        bs: 1024
+        lr: 0.02
+        wd: 0.02
+        mom: 0.9
   outs:
   - path: subs/oof/submission_0.csv
-    md5: b3f863f385ab579f4855431319c6cf29
-    size: 990409
+    md5: cf9e01460b42941e1e7bb8710e60d6c3
+    size: 989890
 unzip_sample_submission:
   cmd: unzip data/ranzcr-clip-catheter-line-classification.zip 'sample_submission.csv'
     -d 'data/'
@@ -98,58 +112,58 @@ resize_images:
     nfiles: 30083
   outs:
   - path: data/test_1024/
-    md5: d2cdc2543fa735fbeb14c3a5c5b955d0.dir
-    size: 212051582
+    md5: 29b494965aebb0664b74e29f3e345473.dir
+    size: 214944270
     nfiles: 3582
   - path: data/test_128/
-    md5: fa02bc9e87c4d59cf97436000253d171.dir
-    size: 8662167
+    md5: 105566336a8298b416d0ef82e347051d.dir
+    size: 8846772
     nfiles: 3582
   - path: data/test_192/
-    md5: 2d10a5485502ea31eee701387642e060.dir
-    size: 15480239
+    md5: 7872b7646f388e9b08695138794c757a.dir
+    size: 15818222
     nfiles: 3582
   - path: data/test_256/
-    md5: d6f8381114ce2dd1256c9c6e115894e0.dir
-    size: 23829886
+    md5: 0a364a5a19354e2080a27411a6996ab5.dir
+    size: 24363993
     nfiles: 3582
   - path: data/test_384/
-    md5: 6754282da167b2e0d130d15eb5916322.dir
-    size: 44406688
+    md5: 85def42fb4ea189dc50f2950f3b88965.dir
+    size: 45232275
     nfiles: 3582
   - path: data/test_512/
-    md5: 1e79874fb38de7d9428a9fb15c3daabd.dir
-    size: 69272022
+    md5: 829fb8073ab10e5ace5d6d05253387b3.dir
+    size: 70444379
     nfiles: 3582
   - path: data/test_768/
-    md5: b8d6237e77a3084c93ca58d362728c7d.dir
-    size: 131412633
+    md5: 9275cfb3acc8651983a9eb43ca03b174.dir
+    size: 133274447
     nfiles: 3582
   - path: data/train_1024/
-    md5: 3cc17b98c75228efca9ad9bb13079ded.dir
-    size: 1750033170
+    md5: 2f49375e6e8e87e1fab5c5075d63b582.dir
+    size: 1773270872
     nfiles: 30083
   - path: data/train_128/
-    md5: efb8e5c58068b4f2ad09f253e21ba05c.dir
-    size: 71148658
-    nfiles: 30084
+    md5: 569de16f618eff737a4f2a8d3e70eec0.dir
+    size: 72692224
+    nfiles: 30083
   - path: data/train_192/
-    md5: c3149ec68ced0439b43a25b213440fbf.dir
-    size: 127518262
+    md5: c480a05f5643a38909ccad7f71000599.dir
+    size: 130326145
     nfiles: 30083
   - path: data/train_256/
-    md5: e8423af0e407521953d43e8c5f15a0ac.dir
-    size: 196666507
-    nfiles: 30084
+    md5: e14002093f230017b4cc1810a53f0328.dir
+    size: 201194414
+    nfiles: 30083
   - path: data/train_384/
-    md5: dc0699c62c9eaf070472c5c2d108ee09.dir
-    size: 367210471
+    md5: 142193318e2adfddd4fb6f8551589009.dir
+    size: 374049179
     nfiles: 30083
   - path: data/train_512/
-    md5: ddeb80c524aef982a83ae50437c27990.dir
-    size: 572793609
+    md5: 088e837dc33da0b21e3f57644c085037.dir
+    size: 582432616
     nfiles: 30083
   - path: data/train_768/
-    md5: bcef0461ef7ee82cf0205440d5308b07.dir
-    size: 1085237766
+    md5: 8695f5a4249f99244a4c8c14e15eac0a.dir
+    size: 1100286799
     nfiles: 30083

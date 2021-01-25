@@ -1,9 +1,11 @@
 import argparse
 
 import albumentations.augmentations.transforms as A
+from albumentations.core.composition import OneOf
+from numpy.lib.function_base import kaiser
 from pipe import constants
 import pytorch_lightning as pl
-from albumentations.core import composition
+import albumentations
 from albumentations.pytorch import transforms
 from pytorch_lightning.core.saving import load_hparams_from_yaml
 
@@ -27,17 +29,51 @@ def run(fold: int, verbose: bool = False):
 
     # drop the label column(s) from dataframe and convert it to a numpy array
     params = load_hparams_from_yaml(constants.params_fpath)
-    hparams = utils.dict_to_args(params["train_resnet_18"])
+    hparams = utils.dict_to_args(params["train_resnet18_128"])
 
-    train_augmentation = composition.Compose(
-        [A.Resize(hparams.sz, hparams.sz), transforms.ToTensorV2()]
+    mean = 0.485
+    std = 0.2295
+    train_augmentation = albumentations.Compose(
+        [
+            albumentations.Normalize(
+                mean, std, max_pixel_value=255.0, always_apply=True
+            ),
+            albumentations.ShiftScaleRotate(
+                shift_limit=0.0625, scale_limit=0.1, rotate_limit=10, p=0.8
+            ),
+            albumentations.OneOf(
+                [
+                    # albumentations.RandomGamma(gamma_limit=(90, 110)),
+                    albumentations.RandomBrightnessContrast(
+                        brightness_limit=0.1, contrast_limit=0.1
+                    ),
+                ],
+                p=0.5,
+            ),
+            transforms.ToTensorV2(),
+        ]
     )
-    valid_augmentation = composition.Compose(
-        [A.Resize(hparams.sz, hparams.sz), transforms.ToTensorV2()]
+    valid_augmentation = albumentations.Compose(
+        [
+            albumentations.Normalize(
+                mean, std, max_pixel_value=255.0, always_apply=True
+            ),
+            transforms.ToTensorV2(),
+        ]
     )
-    test_augmentation = composition.Compose(
-        [A.Resize(hparams.sz, hparams.sz), transforms.ToTensorV2()]
+    test_augmentation = albumentations.Compose(
+        [
+            albumentations.Normalize(
+                mean, std, max_pixel_value=255.0, always_apply=True
+            ),
+            transforms.ToTensorV2(),
+        ]
     )
+
+    # print config to terminal
+    print("Current config:\n")
+    [print(f"{k}: {v}") for k, v in vars(hparams).items()]
+    print("\n")
 
     dm = data.LitDataModule(
         data_path=constants.data_path,
@@ -62,7 +98,15 @@ def run(fold: int, verbose: bool = False):
         num_classes=len(target_cols),
         **vars(hparams),
     )
-    trainer = pl.Trainer(gpus=1, max_epochs=hparams.epochs)
+    if True:
+        trainer = pl.Trainer(gpus=1, max_epochs=hparams.epochs)
+    else:
+        # find optimal lr
+        trainer = pl.Trainer(
+            gpus=1, auto_lr_find=True, max_epochs=hparams.epochs
+        )
+        trainer.tune(model, dm)
+
     trainer.fit(model, dm)
 
     # create predictions for validation samples
