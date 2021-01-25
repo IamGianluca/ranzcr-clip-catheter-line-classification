@@ -56,9 +56,9 @@ class LitClassifier(pl.LightningModule):
         )
         config["optimizer"] = optimizer
 
-        if False:
+        if True:
             config["lr_scheduler"] = ReduceLROnPlateau(
-                optimizer, mode="min", patience=3, verbose=True
+                optimizer, mode="max", patience=3, verbose=True
             )
             config["monitor"] = "valid_metric"
         return config

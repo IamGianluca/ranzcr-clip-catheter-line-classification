@@ -86,8 +86,8 @@ train_model_one:
         mom: 0.9
   outs:
   - path: subs/oof/submission_0.csv
-    md5: 7124b9a81cfcc3b886eb39b70984f026
-    size: 988353
+    md5: 437be3a9788ac9001ca41f8da6f2b07f
+    size: 987124
 unzip_sample_submission:
   cmd: unzip data/ranzcr-clip-catheter-line-classification.zip 'sample_submission.csv'
     -d 'data/'
