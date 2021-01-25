@@ -65,7 +65,7 @@ stages:
       - data/test_512/
       - data/test_768/
       - data/test_1024/
-  split_train_val:
+  create_folds:
     cmd: python pipe/create_folds.py
     deps:
       - data/train.csv
