@@ -1,2 +1,4 @@
 /submission_0.csv
 /arch=resnet18_sz=128_fold=0.csv
+/arch=resnet34_sz=128_fold=0.csv
+/arch=resnet50_sz=128_fold=0.csv

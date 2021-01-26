@@ -14,7 +14,7 @@ from pytorch_lightning.callbacks import ModelCheckpoint
 from ml import classification, data, utils
 
 
-def run(fold: int, verbose: bool = False):
+def run(hparams: argparse.Namespace):
     target_cols = [
         "ETT - Abnormal",
         "ETT - Borderline",
@@ -28,10 +28,6 @@ def run(fold: int, verbose: bool = False):
         "CVC - Normal",
         "Swan Ganz Catheter Present",
     ]
-
-    # drop the label column(s) from dataframe and convert it to a numpy array
-    params = load_hparams_from_yaml(constants.params_fpath)
-    hparams = utils.dict_to_args(params["train_resnet18_128"])
 
     mean = 0.485
     std = 0.2295
@@ -80,7 +76,7 @@ def run(fold: int, verbose: bool = False):
     dm = data.LitDataModule(
         data_path=constants.data_path,
         batch_size=hparams.bs,
-        fold=fold,
+        fold=hparams.fold,
         train_augmentation=train_augmentation,
         valid_augmentation=valid_augmentation,
         test_augmentation=test_augmentation,
@@ -90,7 +86,7 @@ def run(fold: int, verbose: bool = False):
     sample_submission_fpath = constants.data_path / "sample_submission.csv"
     submission_fpath = (
         constants.submissions_path
-        / f"oof/arch={hparams.arch}_sz={hparams.sz}_fold={fold}.csv"
+        / f"oof/arch={hparams.arch}_sz={hparams.sz}_fold={hparams.fold}.csv"
     )
 
     model = classification.LitClassifier(
@@ -106,7 +102,7 @@ def run(fold: int, verbose: bool = False):
         monitor="valid_metric",
         mode="max",
         dirpath=constants.models_path,
-        filename=f"arch={hparams.arch}_sz={hparams.sz}_fold={fold}",
+        filename=f"arch={hparams.arch}_sz={hparams.sz}_fold={hparams.fold}",
         save_weights_only=True,
     )
 
@@ -131,7 +127,18 @@ if __name__ == "__main__":
 
     parser.add_argument("--fold", type=int)
     parser.add_argument("--verbose", type=bool)
+    parser.add_argument("--epochs", type=int)
+    parser.add_argument("--arch", type=str)
+    parser.add_argument("--metric", type=str)
+    parser.add_argument("--opt", type=str)
+    parser.add_argument("--loss", type=str)
+    parser.add_argument("--precision", type=int)
+    parser.add_argument("--sz", type=int)
+    parser.add_argument("--bs", type=int)
+    parser.add_argument("--lr", type=float)
+    parser.add_argument("--wd", type=float)
+    parser.add_argument("--mom", type=float)
 
-    args = parser.parse_args()
+    hparams = parser.parse_args()
 
-    run(fold=args.fold, verbose=args.verbose)
+    run(hparams=hparams)
