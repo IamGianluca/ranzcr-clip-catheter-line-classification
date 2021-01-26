@@ -99,6 +99,8 @@ class LitClassifier(pl.LightningModule):
                 y_true=y_pred.detach().cpu().numpy(),
                 y_pred=y_pred.detach().cpu().numpy(),
             )
+        except ValueError:  # bs to small
+            train_metric = 0.0
 
         self.log("train_loss", train_loss)
         self.log("train_metric", train_metric)
@@ -128,14 +130,19 @@ class LitClassifier(pl.LightningModule):
                 y_true=y_pred.detach().cpu().numpy(),
                 y_pred=y_pred.detach().cpu().numpy(),
             )
+        except ValueError:  # bs to small
+            valid_metric = 0
 
         if self.current_epoch >= 1:
-            train_loss = self.trainer.callback_metrics["train_loss"]
-            train_metric = self.trainer.callback_metrics["train_metric"]
-
-            self.trainer.progress_bar_callback.main_progress_bar.write(
-                f"Epoch {self.current_epoch} // train loss: {train_loss:.4f}, train metric: {train_metric:.4f}, valid loss: {valid_loss:.4f}, valid metric: {valid_metric:.4f}"
-            )
+            try:
+                train_loss = self.trainer.callback_metrics["train_loss"]
+                train_metric = self.trainer.callback_metrics["train_metric"]
+                self.trainer.progress_bar_callback.main_progress_bar.write(
+                    f"Epoch {self.current_epoch} // train loss: {train_loss:.4f}, train metric: {train_metric:.4f}, valid loss: {valid_loss:.4f}, valid metric: {valid_metric:.4f}"
+                )
+            except (KeyError, AttributeError):
+                # these errors occurs when in "tuning" mode (find optimal lr)
+                pass
 
         self.log(
             "valid_loss",

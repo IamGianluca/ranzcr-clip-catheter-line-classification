@@ -1,1 +1,3 @@
 /arch=resnet18_sz=128_fold=0.ckpt
+/arch=resnet34_sz=128_fold=0.ckpt
+/arch=resnet50_sz=128_fold=0.ckpt

@@ -13,3 +13,16 @@ train_resnet18_128:
   lr: 0.02
   wd: 0.02
   mom: 0.9
+
+train_resnet34_128:
+  epochs: 20
+  arch: "resnet34"
+  metric: "multilabel_auc_macro"
+  opt: "adam"
+  loss: "bce_with_logits"
+  precision: 16
+  sz: 128
+  bs: 512
+  lr: 0.02
+  wd: 0.02
+  mom: 0.9
