@@ -197,15 +197,18 @@ train_resnet18_128:
     md5: c0a7355a820dd5f371ba3ffb54eeecd0
     size: 2978438
   - path: pipe/train.py
-    md5: 07a367a146265f74db1e04c9d0a0d049
-    size: 4289
+    md5: 45798468a597d499c380eb4fbea00826
+    size: 5414
   outs:
   - path: models/arch=resnet18_sz=128_fold=0.ckpt
-    md5: 4fa04b2dd3c623ec238f2391d18cecc2
-    size: 44787193
+    md5: afef3a7c1a3aa9eeb57df84b54c3d9f4
+    size: 44786809
+  - path: subs/arch=resnet18_sz=128_fold=0.csv
+    md5: a9fddb22f41d8616e5b8d9a25db32f47
+    size: 984835
   - path: subs/oof/arch=resnet18_sz=128_fold=0.csv
-    md5: 8f002aaba6625c9ff1f7a8a2438fce75
-    size: 987863
+    md5: b6e6c8d30aa09692382da9d9d3b7c13a
+    size: 1671856
 train_resnet34_128:
   cmd: python pipe/train.py --fold 0 --epochs 20 --arch resnet34 --metric multilabel_auc_macro
     --opt adam --loss bce_with_logits --precision 16 --sz 128 --bs 512  --lr 0.005

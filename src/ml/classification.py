@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 
 import pandas as pd
 import pytorch_lightning as pl
@@ -19,8 +19,9 @@ class LitClassifier(pl.LightningModule):
         in_channels: int,
         num_classes: int,
         target_cols: List[str],
-        sample_submission_fpath: Path,
-        submission_fpath: Path,
+        # sample_submission_fpath: Path,
+        # submission_fpath: Path,
+        # oof_predictions_fpath: Optional[Path],
         **kwargs,
     ) -> None:
         super().__init__()
@@ -150,14 +151,14 @@ class LitClassifier(pl.LightningModule):
         )
         self.log("valid_metric", valid_metric)
 
-    def test_step(self, batch, batch_idx):
-        x_test = batch
-        y_pred = self(x_test)
-        return {"y_pred": y_pred}
+    # def test_step(self, batch, batch_idx):
+    #     x_test = batch
+    #     y_pred = self(x_test)
+    #     return {"y_pred": y_pred}
 
-    def test_epoch_end(self, outputs):
-        y_pred = torch.cat([out["y_pred"] for out in outputs])
+    # def test_epoch_end(self, outputs):
+    #     y_pred = torch.cat([out["y_pred"] for out in outputs])
 
-        submission = pd.read_csv(self.hparams.sample_submission_fpath)
-        submission[self.hparams.target_cols] = y_pred.detach().cpu().numpy()
-        submission.to_csv(self.hparams.submission_fpath, index=False)
+    #     submission = pd.read_csv(self.hparams.sample_submission_fpath)
+    #     submission[self.hparams.target_cols] = y_pred.detach().cpu().numpy()
+    #     submission.to_csv(self.hparams.submission_fpath, index=False)

@@ -83,6 +83,7 @@ stages:
     outs:
       - models/arch=resnet18_sz=128_fold=0.ckpt
       - subs/oof/arch=resnet18_sz=128_fold=0.csv
+      - subs/arch=resnet18_sz=128_fold=0.csv
   train_resnet34_128:
     cmd:
       python pipe/train.py --fold 0 --epochs 20 --arch resnet34 --metric multilabel_auc_macro
@@ -94,6 +95,7 @@ stages:
     outs:
       - models/arch=resnet34_sz=128_fold=0.ckpt
       - subs/oof/arch=resnet34_sz=128_fold=0.csv
+      - subs/arch=resnet34_sz=128_fold=0.csv
   train_resnet50_128:
     cmd:
       python pipe/train.py --fold 0 --epochs 20 --arch resnet50 --metric multilabel_auc_macro
@@ -105,3 +107,4 @@ stages:
     outs:
       - models/arch=resnet50_sz=128_fold=0.ckpt
       - subs/oof/arch=resnet50_sz=128_fold=0.csv
+      - subs/arch=resnet50_sz=128_fold=0.csv
