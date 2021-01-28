@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List, Optional
+from typing import List
 
 import pandas as pd
 import pytorch_lightning as pl
@@ -19,9 +19,8 @@ class LitClassifier(pl.LightningModule):
         in_channels: int,
         num_classes: int,
         target_cols: List[str],
-        # sample_submission_fpath: Path,
-        # submission_fpath: Path,
-        # oof_predictions_fpath: Optional[Path],
+        sample_submission_fpath: Path,
+        submission_fpath: Path,
         **kwargs,
     ) -> None:
         super().__init__()
@@ -53,13 +52,18 @@ class LitClassifier(pl.LightningModule):
     def configure_optimizers(self):
         config = dict()
         optimizer = optimizer_factory(
-            name=self.hparams.opt, parameters=self.parameters()
+            params=self.parameters(), hparams=self.hparams
         )
         config["optimizer"] = optimizer
 
         if True:
             config["lr_scheduler"] = ReduceLROnPlateau(
-                optimizer, mode="max", patience=3, verbose=True
+                optimizer,
+                mode="max",
+                patience=3,
+                threshold=0.01,
+                factor=0.05,
+                verbose=True,
             )
             config["monitor"] = "valid_metric"
         return config
@@ -145,20 +149,5 @@ class LitClassifier(pl.LightningModule):
                 # these errors occurs when in "tuning" mode (find optimal lr)
                 pass
 
-        self.log(
-            "valid_loss",
-            valid_loss,
-        )
+        self.log("valid_loss", valid_loss)
         self.log("valid_metric", valid_metric)
-
-    # def test_step(self, batch, batch_idx):
-    #     x_test = batch
-    #     y_pred = self(x_test)
-    #     return {"y_pred": y_pred}
-
-    # def test_epoch_end(self, outputs):
-    #     y_pred = torch.cat([out["y_pred"] for out in outputs])
-
-    #     submission = pd.read_csv(self.hparams.sample_submission_fpath)
-    #     submission[self.hparams.target_cols] = y_pred.detach().cpu().numpy()
-    #     submission.to_csv(self.hparams.submission_fpath, index=False)
