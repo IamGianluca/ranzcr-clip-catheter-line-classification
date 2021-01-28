@@ -53,13 +53,18 @@ class LitClassifier(pl.LightningModule):
     def configure_optimizers(self):
         config = dict()
         optimizer = optimizer_factory(
-            name=self.hparams.opt, parameters=self.parameters()
+            params=self.parameters(), hparams=self.hparams
         )
         config["optimizer"] = optimizer
 
         if True:
             config["lr_scheduler"] = ReduceLROnPlateau(
-                optimizer, mode="max", patience=3, verbose=True
+                optimizer,
+                mode="max",
+                patience=3,
+                threshold=0.01,
+                factor=0.05,
+                verbose=True,
             )
             config["monitor"] = "valid_metric"
         return config
@@ -145,6 +150,7 @@ class LitClassifier(pl.LightningModule):
                 # these errors occurs when in "tuning" mode (find optimal lr)
                 pass
 
+<<<<<<< HEAD
         self.log(
             "valid_loss",
             valid_loss,
@@ -159,6 +165,16 @@ class LitClassifier(pl.LightningModule):
     # def test_epoch_end(self, outputs):
     #     y_pred = torch.cat([out["y_pred"] for out in outputs])
 
+<<<<<<< HEAD
     #     submission = pd.read_csv(self.hparams.sample_submission_fpath)
     #     submission[self.hparams.target_cols] = y_pred.detach().cpu().numpy()
     #     submission.to_csv(self.hparams.submission_fpath, index=False)
+=======
+        submission = pd.read_csv(self.hparams.sample_submission_fpath)
+        submission[self.hparams.target_cols] = y_pred.detach().cpu().numpy()
+        submission.to_csv(self.hparams.submission_fpath, index=False)
+=======
+        self.log("valid_loss", valid_loss)
+        self.log("valid_metric", valid_metric)
+>>>>>>> ef2d41c... sam (0.8446)
+>>>>>>> a6d2860... ML: use SAM optimizer instead of Adam, reduce factor when reducing lr on plateau (0.8446)

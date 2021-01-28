@@ -1,19 +1,16 @@
 import argparse
 
 import albumentations.augmentations.transforms as A
-from albumentations.core.composition import OneOf
-from numpy.lib.function_base import kaiser
-from pytorch_lightning import callbacks
+import pandas as pd
 from pipe import constants
 import pandas as pd
 import numpy as np
 import pytorch_lightning as pl
 import albumentations
 from albumentations.pytorch import transforms
-from pytorch_lightning.core.saving import load_hparams_from_yaml
 from pytorch_lightning.callbacks import ModelCheckpoint
 
-from ml import classification, data, utils
+from ml import classification, data
 
 
 def run(hparams: argparse.Namespace):
@@ -114,7 +111,6 @@ def run(hparams: argparse.Namespace):
     trainer.fit(model, dm)
 
     # TODO: load best model, not just the latest
-    # TODO: refactor
     fname = f"arch={hparams.arch}_sz={hparams.sz}_fold={hparams.fold}.csv"
     oof_predictions_fpath = constants.submissions_path / f"oof/{fname}"
     create_submission(

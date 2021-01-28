@@ -189,16 +189,22 @@ train_modlel_02:
     md5: 125c6c3ae07a99c6d53e0830d10d2e2e
     size: 986208
 train_resnet18_128:
-  cmd: python pipe/train.py --fold 0 --epochs 20 --arch resnet18 --metric multilabel_auc_macro
-    --opt adam --loss bce_with_logits --precision 16 --sz 128 --bs 1024 --lr 0.01
-    --wd 0.02 --mom 0.9
+  cmd: python pipe/train.py --fold 0 --epochs 30 --arch resnet18 --metric multilabel_auc_macro
+    --opt sam --loss bce_with_logits --precision 16 --sz 128 --bs 1024 --lr 0.1 --mom
+    0.9 --wd 0.0
   deps:
   - path: data/train_folds.csv
     md5: c0a7355a820dd5f371ba3ffb54eeecd0
     size: 2978438
   - path: pipe/train.py
+<<<<<<< HEAD
     md5: 45798468a597d499c380eb4fbea00826
     size: 5414
+=======
+<<<<<<< HEAD
+    md5: 07a367a146265f74db1e04c9d0a0d049
+    size: 4289
+>>>>>>> a6d2860... ML: use SAM optimizer instead of Adam, reduce factor when reducing lr on plateau (0.8446)
   outs:
   - path: models/arch=resnet18_sz=128_fold=0.ckpt
     md5: afef3a7c1a3aa9eeb57df84b54c3d9f4
@@ -207,41 +213,66 @@ train_resnet18_128:
     md5: a9fddb22f41d8616e5b8d9a25db32f47
     size: 984835
   - path: subs/oof/arch=resnet18_sz=128_fold=0.csv
+<<<<<<< HEAD
     md5: b6e6c8d30aa09692382da9d9d3b7c13a
     size: 1671856
+=======
+    md5: 8f002aaba6625c9ff1f7a8a2438fce75
+    size: 987863
+=======
+    md5: eaba86a5c24a3aeffa72b0f5b1654c85
+    size: 5393
+  outs:
+  - path: models/arch=resnet18_sz=128_fold=0.ckpt
+    md5: 4ac48b78651bad469d9cf48959c5b0c3
+    size: 44786809
+  - path: subs/arch=resnet18_sz=128_fold=0.csv
+    md5: e096cc64bead2acd8a67a905b464b1dc
+    size: 995649
+  - path: subs/oof/arch=resnet18_sz=128_fold=0.csv
+    md5: 919e40609a09e0b30a05debf85cadce8
+    size: 1688592
+>>>>>>> ef2d41c... sam (0.8446)
+>>>>>>> a6d2860... ML: use SAM optimizer instead of Adam, reduce factor when reducing lr on plateau (0.8446)
 train_resnet34_128:
-  cmd: python pipe/train.py --fold 0 --epochs 20 --arch resnet34 --metric multilabel_auc_macro
-    --opt adam --loss bce_with_logits --precision 16 --sz 128 --bs 512  --lr 0.005
-    --wd 0.02 --mom 0.9
+  cmd: python pipe/train.py --fold 0 --epochs 30 --arch resnet34 --metric multilabel_auc_macro
+    --opt sam --loss bce_with_logits --precision 16 --sz 128 --bs 512  --lr 0.1 --mom
+    0.9 --wd 0.0
   deps:
   - path: data/train_folds.csv
     md5: c0a7355a820dd5f371ba3ffb54eeecd0
     size: 2978438
   - path: pipe/train.py
-    md5: 07a367a146265f74db1e04c9d0a0d049
-    size: 4289
+    md5: eaba86a5c24a3aeffa72b0f5b1654c85
+    size: 5393
   outs:
   - path: models/arch=resnet34_sz=128_fold=0.ckpt
-    md5: aede888f4db0686caa40e4b2080c6b5e
-    size: 85284057
+    md5: 17588e673da0bff2917ba8842f5ebcb9
+    size: 85283673
+  - path: subs/arch=resnet34_sz=128_fold=0.csv
+    md5: 616b0b380aeb5b35ac6edbb3a6e036cf
+    size: 993591
   - path: subs/oof/arch=resnet34_sz=128_fold=0.csv
-    md5: 893493cb64c231154c704ec92c047cf2
-    size: 985863
+    md5: 40dc03212318a854aa4a4718595eda6f
+    size: 1686803
 train_resnet50_128:
-  cmd: python pipe/train.py --fold 0 --epochs 20 --arch resnet50 --metric multilabel_auc_macro
-    --opt adam --loss bce_with_logits --precision 16 --sz 128 --bs 256 --lr 0.0005
-    --wd 0.02 --mom 0.9
+  cmd: python pipe/train.py --fold 0 --epochs 30 --arch resnet50 --metric multilabel_auc_macro
+    --opt sam --loss bce_with_logits --precision 16 --sz 128 --bs 256 --lr 0.1 --mom
+    0.9 --wd 0.0
   deps:
   - path: data/train_folds.csv
     md5: c0a7355a820dd5f371ba3ffb54eeecd0
     size: 2978438
   - path: pipe/train.py
-    md5: 07a367a146265f74db1e04c9d0a0d049
-    size: 4289
+    md5: eaba86a5c24a3aeffa72b0f5b1654c85
+    size: 5393
   outs:
   - path: models/arch=resnet50_sz=128_fold=0.ckpt
-    md5: 7b22be203a1710cfdb6071b9095864ed
-    size: 94425647
+    md5: a9e8d9db428f2790918237f0822587a8
+    size: 94425263
+  - path: subs/arch=resnet50_sz=128_fold=0.csv
+    md5: 08cc420a09824abd1290cc3d66230588
+    size: 993842
   - path: subs/oof/arch=resnet50_sz=128_fold=0.csv
-    md5: a6fbb99529ff84ddb203d62abf9d365e
-    size: 993347
+    md5: 617f5a3f89ddbb624380202547c11210
+    size: 1685685
