@@ -1,8 +1,8 @@
 import constants
 import pandas as pd
+from iterstrat.ml_stratifiers import MultilabelStratifiedKFold
 
 from pipe import constants
-from iterstrat.ml_stratifiers import MultilabelStratifiedKFold
 
 
 def split():
