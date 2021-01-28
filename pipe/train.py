@@ -5,6 +5,8 @@ from albumentations.core.composition import OneOf
 from numpy.lib.function_base import kaiser
 from pytorch_lightning import callbacks
 from pipe import constants
+import pandas as pd
+import numpy as np
 import pytorch_lightning as pl
 import albumentations
 from albumentations.pytorch import transforms
@@ -83,16 +85,8 @@ def run(hparams: argparse.Namespace):
     )
     dm.setup()
 
-    sample_submission_fpath = constants.data_path / "sample_submission.csv"
-    submission_fpath = (
-        constants.submissions_path
-        / f"oof/arch={hparams.arch}_sz={hparams.sz}_fold={hparams.fold}.csv"
-    )
-
     model = classification.LitClassifier(
         target_cols=target_cols,
-        sample_submission_fpath=sample_submission_fpath,
-        submission_fpath=submission_fpath,
         in_channels=1,
         num_classes=len(target_cols),
         **vars(hparams),
@@ -116,10 +110,57 @@ def run(hparams: argparse.Namespace):
     if auto_lr_find:
         trainer.tune(model, dm)
 
+    # train and validate model
     trainer.fit(model, dm)
 
-    # create predictions for validation samples
-    trainer.test(datamodule=dm)
+    # TODO: load best model, not just the latest
+    # TODO: refactor
+    fname = f"arch={hparams.arch}_sz={hparams.sz}_fold={hparams.fold}.csv"
+    oof_predictions_fpath = constants.submissions_path / f"oof/{fname}"
+    create_submission(
+        hparams=hparams,
+        target_cols=target_cols,
+        dm=dm.val_dataloader,
+        model=model,
+        is_oof=True,
+        fpath=oof_predictions_fpath,
+    )
+
+    submission_fpath = constants.submissions_path / fname
+    create_submission(
+        hparams=hparams,
+        target_cols=target_cols,
+        dm=dm.test_dataloader,
+        model=model,
+        is_oof=False,
+        fpath=submission_fpath,
+    )
+
+
+def create_submission(hparams, target_cols, dm, model, is_oof, fpath):
+    model.freeze()
+    model.to("cuda")
+
+    preds = []
+    for batch in dm():
+        if is_oof:
+            x, _ = batch
+        else:
+            x = batch  # wedon't have targets for test data
+        batch_preds = model(x.to("cuda"))
+        preds.append(batch_preds.detach().cpu().numpy())
+    preds = np.vstack(preds)
+
+    if is_oof:
+        result = pd.read_csv(constants.train_folds_fpath)
+        result = result.loc[:, ["StudyInstanceUID"] + target_cols + ["kfold"]]
+        result = result[result.kfold == hparams.fold]
+        result[target_cols] = preds
+    else:
+        result = pd.read_csv(constants.sample_submission_fpath)
+        result[target_cols] = preds
+
+    result.to_csv(fpath, index=False)
 
 
 if __name__ == "__main__":
