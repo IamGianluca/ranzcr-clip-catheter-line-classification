@@ -2,6 +2,7 @@ from typing import Iterable
 
 import torch
 from torch import optim
+from torch.optim import lr_scheduler
 from torch.optim._multi_tensor import SGD
 
 __all__ = ["SAMSGD"]
@@ -12,8 +13,16 @@ def optimizer_factory(params, hparams):
         return optim.Adam(
             params,
             lr=hparams.lr,
-            momentum=hparams.mom,
             weight_decay=hparams.wd,
+        )
+    if hparams.opt == "adamw":
+        return optim.AdamW(
+            params,
+            lr=hparams.lr,
+            betas=(0.9, 0.999),
+            eps=1e-08,
+            weight_decay=hparams.wd,
+            amsgrad=False,
         )
     if hparams.opt == "sam":
         return SAM(
@@ -24,6 +33,28 @@ def optimizer_factory(params, hparams):
         )
     else:
         raise ValueError("Optimizer not supported yet.")
+
+
+def lr_scheduler_factory(optimizer, hparams, data_loader):
+    if hparams.lr_scheduler == "reduce_on_plateau":
+        return lr_scheduler.ReduceLROnPlateau(
+            optimizer,
+            mode="max",
+            patience=3,
+            threshold=0.01,
+            factor=0.05,
+            verbose=True,
+        )
+    if hparams.lr_scheduler == "onecycle":
+        return lr_scheduler.OneCycleLR(
+            optimizer=optimizer,
+            max_lr=hparams.lr * 10,
+            cycle_momentum=True,
+            steps_per_epoch=len(data_loader),
+            epochs=hparams.epochs,
+        )
+    else:
+        raise ValueError("Learning rate scheduler not supported yet.")
 
 
 # copied from https://github.com/moskomule/sam.pytorch/blob/main/sam.py

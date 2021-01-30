@@ -4,13 +4,14 @@ from typing import List
 import pandas as pd
 import pytorch_lightning as pl
 import torch
+from torch.optim import lr_scheduler
 import torchvision.models as models
 from torch import nn
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 
 from .loss import loss_factory
 from .metrics import metric_factory
-from .optim import optimizer_factory
+from .optim import optimizer_factory, lr_scheduler_factory
 
 
 class LitClassifier(pl.LightningModule):
@@ -19,8 +20,6 @@ class LitClassifier(pl.LightningModule):
         in_channels: int,
         num_classes: int,
         target_cols: List[str],
-        sample_submission_fpath: Path,
-        submission_fpath: Path,
         **kwargs,
     ) -> None:
         super().__init__()
@@ -57,13 +56,8 @@ class LitClassifier(pl.LightningModule):
         config["optimizer"] = optimizer
 
         if True:
-            config["lr_scheduler"] = ReduceLROnPlateau(
-                optimizer,
-                mode="max",
-                patience=3,
-                threshold=0.01,
-                factor=0.05,
-                verbose=True,
+            config["lr_scheduler"] = lr_scheduler_factory(
+                optimizer=optimizer, hparams=self.hparams, data_loader=self.train_dataloader()
             )
             config["monitor"] = "valid_metric"
         return config

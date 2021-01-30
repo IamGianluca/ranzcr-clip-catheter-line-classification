@@ -96,14 +96,13 @@ def run(hparams: argparse.Namespace):
         save_weights_only=True,
     )
 
-    auto_lr_find = False
     trainer = pl.Trainer(
         gpus=1,
-        auto_lr_find=auto_lr_find,
+        auto_lr_find=hparams.auto_lr,
         max_epochs=hparams.epochs,
         callbacks=[checkpoint_callback],
     )
-    if auto_lr_find:
+    if hparams.auto_lr:
         trainer.tune(model, dm)
 
     # train and validate model
@@ -158,6 +157,17 @@ def create_submission(hparams, target_cols, dm, model, is_oof, fpath):
     result.to_csv(fpath, index=False)
 
 
+def str2bool(v):
+    if isinstance(v, bool):
+        return v
+    if v.lower() in ("yes", "true", "t", "y", "1"):
+        return True
+    elif v.lower() in ("no", "false", "f", "n", "0"):
+        return False
+    else:
+        raise argparse.ArgumentTypeError("Boolean value expected.")
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
@@ -168,10 +178,16 @@ if __name__ == "__main__":
     parser.add_argument("--metric", type=str)
     parser.add_argument("--opt", type=str)
     parser.add_argument("--loss", type=str)
-    parser.add_argument("--precision", type=int)
+    parser.add_argument("--precision", type=int, default=16)
     parser.add_argument("--sz", type=int)
     parser.add_argument("--bs", type=int)
     parser.add_argument("--lr", type=float)
+    parser.add_argument(
+        "--auto_lr", type=str2bool, nargs="?", const=True, default=False
+    )
+    parser.add_argument(
+        "--lr_scheduler", type=str, default="reduce_on_plateau"
+    )
     parser.add_argument("--wd", type=float)
     parser.add_argument("--mom", type=float)
 
