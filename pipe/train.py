@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 import pytorch_lightning as pl
 from albumentations.pytorch import transforms
-from pytorch_lightning.callbacks import ModelCheckpoint
+from pytorch_lightning import callbacks
 
 from ml import classification, data
 from pipe import constants
@@ -31,16 +31,44 @@ def run(hparams: argparse.Namespace):
     std = 0.2295
     train_augmentation = albumentations.Compose(
         [
-            albumentations.ShiftScaleRotate(
-                shift_limit=0.0625, scale_limit=0.1, rotate_limit=10, p=0.8
+            albumentations.RandomResizedCrop(
+                hparams.sz, hparams.sz, scale=(0.9, 1), p=1
+            ),
+            albumentations.HorizontalFlip(p=0.5),
+            albumentations.ShiftScaleRotate(p=0.5),
+            albumentations.RandomBrightnessContrast(
+                brightness_limit=(-0.2, 0.2), contrast_limit=(-0.2, 0.2), p=0.7
             ),
             albumentations.OneOf(
                 [
-                    # albumentations.RandomGamma(gamma_limit=(90, 110)),
-                    albumentations.RandomBrightnessContrast(
-                        brightness_limit=0.1, contrast_limit=0.1
+                    albumentations.OpticalDistortion(distort_limit=1.0),
+                    albumentations.GridDistortion(
+                        num_steps=5, distort_limit=1.0
                     ),
+                    albumentations.ElasticTransform(alpha=3),
                 ],
+                p=0.2,
+            ),
+            albumentations.OneOf(
+                [
+                    albumentations.GaussNoise(var_limit=[10, 50]),
+                    albumentations.GaussianBlur(),
+                    albumentations.MotionBlur(),
+                    albumentations.MedianBlur(),
+                ],
+                p=0.2,
+            ),
+            albumentations.OneOf(
+                [
+                    albumentations.JpegCompression(),
+                    albumentations.Downscale(scale_min=0.1, scale_max=0.15),
+                ],
+                p=0.2,
+            ),
+            albumentations.Cutout(
+                max_h_size=int(hparams.sz * 0.1),
+                max_w_size=int(hparams.sz * 0.1),
+                num_holes=5,
                 p=0.5,
             ),
             albumentations.Normalize(
@@ -73,8 +101,9 @@ def run(hparams: argparse.Namespace):
 
     dm = data.LitDataModule(
         data_path=constants.data_path,
-        batch_size=hparams.bs,
+        batch_size=hparams.batch_size,
         fold=hparams.fold,
+        sz=hparams.sz,
         train_augmentation=train_augmentation,
         valid_augmentation=valid_augmentation,
         test_augmentation=test_augmentation,
@@ -88,21 +117,31 @@ def run(hparams: argparse.Namespace):
         **vars(hparams),
     )
 
-    checkpoint_callback = ModelCheckpoint(
+    checkpoint_callback = callbacks.ModelCheckpoint(
         monitor="valid_metric",
         mode="max",
         dirpath=constants.models_path,
         filename=f"arch={hparams.arch}_sz={hparams.sz}_fold={hparams.fold}",
         save_weights_only=True,
     )
+    earlystopping_callback = callbacks.EarlyStopping(
+        monitor="valid_metric",
+        min_delta=0.0,
+        patience=5,
+        verbose=False,
+        mode="max",
+        strict=True,
+    )
 
     trainer = pl.Trainer(
         gpus=1,
         auto_lr_find=hparams.auto_lr,
+        auto_scale_batch_size=hparams.auto_batch_size,
         max_epochs=hparams.epochs,
-        callbacks=[checkpoint_callback],
+        callbacks=[checkpoint_callback, earlystopping_callback],
     )
-    if hparams.auto_lr:
+    if hparams.auto_lr or hparams.auto_batch_size:
+        print("Tuning...")
         trainer.tune(model, dm)
 
     # train and validate model
@@ -173,14 +212,15 @@ if __name__ == "__main__":
 
     parser.add_argument("--fold", type=int)
     parser.add_argument("--verbose", type=bool)
-    parser.add_argument("--epochs", type=int)
+    parser.add_argument("--epochs", type=int, default=1_000)
     parser.add_argument("--arch", type=str)
     parser.add_argument("--metric", type=str)
     parser.add_argument("--opt", type=str)
     parser.add_argument("--loss", type=str)
     parser.add_argument("--precision", type=int, default=16)
     parser.add_argument("--sz", type=int)
-    parser.add_argument("--bs", type=int)
+    parser.add_argument("--batch_size", type=int, default=32)
+    parser.add_argument("--auto_batch_size", type=str, default=None)
     parser.add_argument("--lr", type=float)
     parser.add_argument(
         "--auto_lr", type=str2bool, nargs="?", const=True, default=False

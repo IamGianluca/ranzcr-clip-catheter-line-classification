@@ -5,8 +5,6 @@ from torch import optim
 from torch.optim import lr_scheduler
 from torch.optim._multi_tensor import SGD
 
-__all__ = ["SAMSGD"]
-
 
 def optimizer_factory(params, hparams):
     if hparams.opt == "adam":
@@ -39,10 +37,10 @@ def lr_scheduler_factory(optimizer, hparams, data_loader):
     if hparams.lr_scheduler == "reduce_on_plateau":
         return lr_scheduler.ReduceLROnPlateau(
             optimizer,
-            mode="max",
-            patience=3,
+            mode="max",  # TODO: make mode an argument
+            patience=2,
             threshold=0.01,
-            factor=0.05,
+            factor=0.1,
             verbose=True,
         )
     if hparams.lr_scheduler == "onecycle":
