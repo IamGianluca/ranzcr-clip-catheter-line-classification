@@ -74,8 +74,8 @@ stages:
       - data/train_folds.csv
   train_resnet18_128:
     cmd:
-      python pipe/train.py --fold 0 --epochs 20 --arch resnet18 --metric multilabel_auc_macro
-      --opt sam --loss bce_with_logits --precision 16 --sz 128 --bs 1024 --lr 0.1
+      python pipe/train.py --fold 0 --arch resnet18 --metric multilabel_auc_macro
+      --opt sam --loss bce_with_logits --precision 16 --sz 128 --auto_batch_size power --lr 0.1
       --lr_scheduler reduce_on_plateau --mom 0.9 --wd 0.0
     deps:
       - data/train_folds.csv
@@ -86,8 +86,8 @@ stages:
       - subs/arch=resnet18_sz=128_fold=0.csv
   train_resnet34_128:
     cmd:
-      python pipe/train.py --fold 0 --epochs 20 --arch resnet34 --metric multilabel_auc_macro
-      --opt sam --loss bce_with_logits --precision 16 --sz 128 --bs 512  --lr 0.1
+      python pipe/train.py --fold 0 --arch resnet34 --metric multilabel_auc_macro
+      --opt sam --loss bce_with_logits --precision 16 --sz 128 --auto_batch_size power --lr 0.1
       --lr_scheduler reduce_on_plateau --mom 0.9 --wd 0.0
     deps:
       - data/train_folds.csv
@@ -98,8 +98,8 @@ stages:
       - subs/arch=resnet34_sz=128_fold=0.csv
   train_resnet50_128:
     cmd:
-      python pipe/train.py --fold 0 --epochs 20 --arch resnet50 --metric multilabel_auc_macro
-      --opt sam --loss bce_with_logits --precision 16 --sz 128 --bs 256 --lr 0.1
+      python pipe/train.py --fold 0 --arch resnet50 --metric multilabel_auc_macro
+      --opt sam --loss bce_with_logits --precision 16 --sz 128 --auto_batch_size power --lr 0.1
       --lr_scheduler reduce_on_plateau --mom 0.9 --wd 0.0
     deps:
       - data/train_folds.csv
