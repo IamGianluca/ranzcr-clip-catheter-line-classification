@@ -36,16 +36,16 @@ def optimizer_factory(params, hparams):
 
 
 def lr_scheduler_factory(optimizer, hparams, data_loader):
-    if hparams.lr_scheduler == "reduce_on_plateau":
+    if hparams.sched == "plateau":
         return lr_scheduler.ReduceLROnPlateau(
             optimizer,
             mode="max",
-            patience=3,
+            patience=2,
             threshold=0.01,
-            factor=0.05,
+            factor=0.1,
             verbose=True,
         )
-    if hparams.lr_scheduler == "onecycle":
+    if hparams.sched == "onecycle":
         return lr_scheduler.OneCycleLR(
             optimizer=optimizer,
             max_lr=hparams.lr * 10,

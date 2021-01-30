@@ -159,65 +159,104 @@ train_modlel_02:
     md5: 125c6c3ae07a99c6d53e0830d10d2e2e
     size: 986208
 train_resnet18_128:
-  cmd: python pipe/train.py --fold 0 --epochs 20 --arch resnet18 --metric multilabel_auc_macro
-    --opt sam --loss bce_with_logits --precision 16 --sz 128 --bs 1024 --lr 0.1 --lr_scheduler
-    reduce_on_plateau --mom 0.9 --wd 0.0
+  cmd: python pipe/train.py --fold -1 --arch resnet18 --metric multilabel_auc_macro
+    --opt sam --loss bce_with_logits --precision 16 --sz 128 --auto_batch_size power
+    --lr 0.1 --sched plateau --mom 0.9 --wd 0.0
   deps:
   - path: data/train_folds.csv
     md5: c0a7355a820dd5f371ba3ffb54eeecd0
     size: 2978438
   - path: pipe/train.py
-    md5: d7d95995ca57abcf3629d7bb4c4bd62c
-    size: 5669
+    md5: ab19123134b658160ea4df1b371b0e31
+    size: 7072
   outs:
+  - path: metrics/arch=resnet18_sz=128.metric
+    md5: 642140559d3fc08a2f18565ffb94875e
+    size: 31
   - path: models/arch=resnet18_sz=128_fold=0.ckpt
-    md5: 23deaed2239ef1a448f77a5dbbc4782c
-    size: 44786873
+    md5: 3089f7b80bccc6a789f3a6cd6abde49c
+    size: 44787010
+  - path: models/arch=resnet18_sz=128_fold=1.ckpt
+    md5: bbd2f4771acd65c2b771559c64c0a7f7
+    size: 44787005
+  - path: models/arch=resnet18_sz=128_fold=2.ckpt
+    md5: 62bbb6bab2864518150c75c456995c0d
+    size: 44787006
+  - path: models/arch=resnet18_sz=128_fold=3.ckpt
+    md5: b837be8f57e2b688c69f06899c4d4d53
+    size: 44787005
+  - path: models/arch=resnet18_sz=128_fold=4.ckpt
+    md5: 1cd444ba777fef10718d93c52a84f91e
+    size: 44787005
   - path: subs/arch=resnet18_sz=128_fold=0.csv
-    md5: f42f0f46b1a760e21906d6f2710cb765
-    size: 994383
+    md5: 8b8984bbff513dbffd64f80acb1bd0b2
+    size: 994828
+  - path: subs/arch=resnet18_sz=128_fold=1.csv
+    md5: 2e496b15d042e1ffc805c8fbf3f9c432
+    size: 998473
+  - path: subs/arch=resnet18_sz=128_fold=2.csv
+    md5: 48f891efb416e497fd9da72e8ed76858
+    size: 996339
+  - path: subs/arch=resnet18_sz=128_fold=3.csv
+    md5: 9a19dc4a6d62859484b535f2b62037c6
+    size: 996050
+  - path: subs/arch=resnet18_sz=128_fold=4.csv
+    md5: 236e13862f5be2f11fe6a55bb47aadda
+    size: 994519
   - path: subs/oof/arch=resnet18_sz=128_fold=0.csv
-    md5: b019e15c37058723e08d669694841ee5
-    size: 1687220
+    md5: 96c7527020836bc501468771310ab1f4
+    size: 1686678
+  - path: subs/oof/arch=resnet18_sz=128_fold=1.csv
+    md5: e7b5cc1f59cc81cccee1fa7a0e66efa0
+    size: 1680905
+  - path: subs/oof/arch=resnet18_sz=128_fold=2.csv
+    md5: aaf72abc05954cd354d819e66745f0da
+    size: 1684539
+  - path: subs/oof/arch=resnet18_sz=128_fold=3.csv
+    md5: 7fef6a69d9ff9317d1c07fe55ff1f724
+    size: 1679909
+  - path: subs/oof/arch=resnet18_sz=128_fold=4.csv
+    md5: 66a602e2b1b7d4b12d292eda2cf7a597
+    size: 1686517
 train_resnet34_128:
-  cmd: python pipe/train.py --fold 0 --epochs 20 --arch resnet34 --metric multilabel_auc_macro
-    --opt sam --loss bce_with_logits --precision 16 --sz 128 --bs 512  --lr 0.1 --lr_scheduler
-    reduce_on_plateau --mom 0.9 --wd 0.0
+  cmd: python pipe/train.py --fold 0 --arch resnet34 --metric multilabel_auc_macro
+    --opt sam --loss bce_with_logits --precision 16 --sz 128 --auto_batch_size power
+    --lr 0.1 --lr_scheduler reduce_on_plateau --mom 0.9 --wd 0.0
   deps:
   - path: data/train_folds.csv
     md5: c0a7355a820dd5f371ba3ffb54eeecd0
     size: 2978438
   - path: pipe/train.py
-    md5: d7d95995ca57abcf3629d7bb4c4bd62c
-    size: 5669
+    md5: 0598ad00f41707e969b91ec3f5b6fc6b
+    size: 6109
   outs:
   - path: models/arch=resnet34_sz=128_fold=0.ckpt
-    md5: 88f2fbb465d6225e236e01cd1becc61f
-    size: 85283737
+    md5: 6b4628afe990056937e977a7a50e64c6
+    size: 85283809
   - path: subs/arch=resnet34_sz=128_fold=0.csv
-    md5: ee71ebf60306744c5f59fa744ba0eee3
-    size: 992244
+    md5: 5fa09f3be30944601692355e2b00f4de
+    size: 992399
   - path: subs/oof/arch=resnet34_sz=128_fold=0.csv
-    md5: ad500ffff833515dbd076af315decba7
-    size: 1684186
+    md5: 91984a21c504205f117fb2fbdb186961
+    size: 1684459
 train_resnet50_128:
-  cmd: python pipe/train.py --fold 0 --epochs 20 --arch resnet50 --metric multilabel_auc_macro
-    --opt sam --loss bce_with_logits --precision 16 --sz 128 --bs 256 --lr 0.1 --lr_scheduler
-    reduce_on_plateau --mom 0.9 --wd 0.0
+  cmd: python pipe/train.py --fold 0 --arch resnet50 --metric multilabel_auc_macro
+    --opt sam --loss bce_with_logits --precision 16 --sz 128 --auto_batch_size power
+    --lr 0.1 --lr_scheduler reduce_on_plateau --mom 0.9 --wd 0.0
   deps:
   - path: data/train_folds.csv
     md5: c0a7355a820dd5f371ba3ffb54eeecd0
     size: 2978438
   - path: pipe/train.py
-    md5: d7d95995ca57abcf3629d7bb4c4bd62c
-    size: 5669
+    md5: 0598ad00f41707e969b91ec3f5b6fc6b
+    size: 6109
   outs:
   - path: models/arch=resnet50_sz=128_fold=0.ckpt
-    md5: 8b2736b5ac1f3f01a7702f6cbd0808b0
-    size: 94425327
+    md5: 204c1fb6dbcc285e5a2f264510de061b
+    size: 94425410
   - path: subs/arch=resnet50_sz=128_fold=0.csv
-    md5: 8c20e50ccb82f9bcca4d48b9be128ac8
-    size: 994142
+    md5: 5fa51147ffe77fbf80b2b2042324a73b
+    size: 997502
   - path: subs/oof/arch=resnet50_sz=128_fold=0.csv
-    md5: dddb5c60a6f8f54f019ad6f4190a5a7e
-    size: 1685324
+    md5: 6eae9a6bc67276e3c77c47989b906d67
+    size: 1687542

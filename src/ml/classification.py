@@ -24,6 +24,7 @@ class LitClassifier(pl.LightningModule):
     ) -> None:
         super().__init__()
         self.save_hyperparameters()
+        self.best_valid_metric = None
 
         # TODO: create model factory and incapsulate changes required to
         # work with inputs of different in_channels, num_classes,
@@ -57,7 +58,9 @@ class LitClassifier(pl.LightningModule):
 
         if True:
             config["lr_scheduler"] = lr_scheduler_factory(
-                optimizer=optimizer, hparams=self.hparams, data_loader=self.train_dataloader()
+                optimizer=optimizer,
+                hparams=self.hparams,
+                data_loader=self.train_dataloader(),
             )
             config["monitor"] = "valid_metric"
         return config
@@ -139,6 +142,12 @@ class LitClassifier(pl.LightningModule):
                 self.trainer.progress_bar_callback.main_progress_bar.write(
                     f"Epoch {self.current_epoch} // train loss: {train_loss:.4f}, train metric: {train_metric:.4f}, valid loss: {valid_loss:.4f}, valid metric: {valid_metric:.4f}"
                 )
+                # TODO: check if there is a better way to access this value
+                if (
+                    self.best_valid_metric is None
+                    or valid_metric > self.best_valid_metric
+                ):
+                    self.best_valid_metric = valid_metric
             except (KeyError, AttributeError):
                 # these errors occurs when in "tuning" mode (find optimal lr)
                 pass
