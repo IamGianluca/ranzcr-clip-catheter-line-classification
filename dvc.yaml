@@ -74,37 +74,82 @@ stages:
       - data/train_folds.csv
   train_resnet18_128:
     cmd:
-      python pipe/train.py --fold 0 --epochs 20 --arch resnet18 --metric multilabel_auc_macro
-      --opt sam --loss bce_with_logits --precision 16 --sz 128 --bs 1024 --lr 0.1
-      --lr_scheduler reduce_on_plateau --mom 0.9 --wd 0.0
+      python pipe/train.py --fold -1 --arch resnet18 --metric multilabel_auc_macro
+      --opt sam --loss bce_with_logits --precision 16 --sz 128 --auto_batch_size power
+      --lr 0.1 --sched plateau --mom 0.9 --wd 0.0
     deps:
       - data/train_folds.csv
       - pipe/train.py
     outs:
       - models/arch=resnet18_sz=128_fold=0.ckpt
+      - models/arch=resnet18_sz=128_fold=1.ckpt
+      - models/arch=resnet18_sz=128_fold=2.ckpt
+      - models/arch=resnet18_sz=128_fold=3.ckpt
+      - models/arch=resnet18_sz=128_fold=4.ckpt
       - subs/oof/arch=resnet18_sz=128_fold=0.csv
+      - subs/oof/arch=resnet18_sz=128_fold=1.csv
+      - subs/oof/arch=resnet18_sz=128_fold=2.csv
+      - subs/oof/arch=resnet18_sz=128_fold=3.csv
+      - subs/oof/arch=resnet18_sz=128_fold=4.csv
       - subs/arch=resnet18_sz=128_fold=0.csv
+      - subs/arch=resnet18_sz=128_fold=1.csv
+      - subs/arch=resnet18_sz=128_fold=2.csv
+      - subs/arch=resnet18_sz=128_fold=3.csv
+      - subs/arch=resnet18_sz=128_fold=4.csv
+    metrics:
+      - metrics/arch=resnet18_sz=128.metric:
+          cache: false
   train_resnet34_128:
     cmd:
-      python pipe/train.py --fold 0 --epochs 20 --arch resnet34 --metric multilabel_auc_macro
-      --opt sam --loss bce_with_logits --precision 16 --sz 128 --bs 512  --lr 0.1
-      --lr_scheduler reduce_on_plateau --mom 0.9 --wd 0.0
+      python pipe/train.py --fold -1 --arch resnet34 --metric multilabel_auc_macro
+      --opt sam --loss bce_with_logits --precision 16 --sz 128 --auto_batch_size power
+      --lr 0.1 --sched plateau --mom 0.9 --wd 0.0
     deps:
       - data/train_folds.csv
       - pipe/train.py
     outs:
       - models/arch=resnet34_sz=128_fold=0.ckpt
+      - models/arch=resnet34_sz=128_fold=1.ckpt
+      - models/arch=resnet34_sz=128_fold=2.ckpt
+      - models/arch=resnet34_sz=128_fold=3.ckpt
+      - models/arch=resnet34_sz=128_fold=4.ckpt
       - subs/oof/arch=resnet34_sz=128_fold=0.csv
+      - subs/oof/arch=resnet34_sz=128_fold=1.csv
+      - subs/oof/arch=resnet34_sz=128_fold=2.csv
+      - subs/oof/arch=resnet34_sz=128_fold=3.csv
+      - subs/oof/arch=resnet34_sz=128_fold=4.csv
       - subs/arch=resnet34_sz=128_fold=0.csv
+      - subs/arch=resnet34_sz=128_fold=1.csv
+      - subs/arch=resnet34_sz=128_fold=2.csv
+      - subs/arch=resnet34_sz=128_fold=3.csv
+      - subs/arch=resnet34_sz=128_fold=4.csv
+    metrics:
+      - metrics/arch=resnet34_sz=128.metric:
+          cache: false
   train_resnet50_128:
     cmd:
-      python pipe/train.py --fold 0 --epochs 20 --arch resnet50 --metric multilabel_auc_macro
-      --opt sam --loss bce_with_logits --precision 16 --sz 128 --bs 256 --lr 0.1
-      --lr_scheduler reduce_on_plateau --mom 0.9 --wd 0.0
+      python pipe/train.py --fold -1 --arch resnet50 --metric multilabel_auc_macro
+      --opt sam --loss bce_with_logits --precision 16 --sz 128 --auto_batch_size power
+      --lr 0.1 --sched plateau --mom 0.9 --wd 0.0
     deps:
       - data/train_folds.csv
       - pipe/train.py
     outs:
       - models/arch=resnet50_sz=128_fold=0.ckpt
+      - models/arch=resnet50_sz=128_fold=1.ckpt
+      - models/arch=resnet50_sz=128_fold=2.ckpt
+      - models/arch=resnet50_sz=128_fold=3.ckpt
+      - models/arch=resnet50_sz=128_fold=4.ckpt
       - subs/oof/arch=resnet50_sz=128_fold=0.csv
+      - subs/oof/arch=resnet50_sz=128_fold=1.csv
+      - subs/oof/arch=resnet50_sz=128_fold=2.csv
+      - subs/oof/arch=resnet50_sz=128_fold=3.csv
+      - subs/oof/arch=resnet50_sz=128_fold=4.csv
       - subs/arch=resnet50_sz=128_fold=0.csv
+      - subs/arch=resnet50_sz=128_fold=1.csv
+      - subs/arch=resnet50_sz=128_fold=2.csv
+      - subs/arch=resnet50_sz=128_fold=3.csv
+      - subs/arch=resnet50_sz=128_fold=4.csv
+    metrics:
+      - metrics/arch=resnet50_sz=128.metric:
+          cache: false
