@@ -23,6 +23,10 @@ def str2bool(v):
         raise argparse.ArgumentTypeError("Boolean value expected.")
 
 
+def str2path(v):
+    return constants.data_path / v
+
+
 def parse_arguments(str2bool):
     parser = argparse.ArgumentParser()
 
@@ -40,6 +44,8 @@ def parse_arguments(str2bool):
     parser.add_argument("--arch", type=str)
 
     # data loader
+    parser.add_argument("--train_data", type=str2path)
+    parser.add_argument("--test_data", type=str2path)
     parser.add_argument("--sz", type=int)
     parser.add_argument("--batch_size", type=int, default=32)
     parser.add_argument("--auto_batch_size", type=str, default=None)
@@ -129,6 +135,9 @@ def run(hparams: argparse.Namespace):
         data_path=constants.data_path,
         batch_size=hparams.batch_size,
         fold=hparams.fold,
+        train_image_path=hparams.train_data,
+        valid_image_path=hparams.train_data,
+        test_image_path=hparams.test_data,
         train_augmentation=train_augmentation,
         valid_augmentation=valid_augmentation,
         test_augmentation=test_augmentation,

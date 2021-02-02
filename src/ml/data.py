@@ -39,6 +39,9 @@ class LitDataModule(pl.LightningDataModule):
         data_path: Path,
         batch_size,
         fold: int,
+        train_image_path=None,
+        valid_image_path=None,
+        test_image_path=None,
         train_augmentation=None,
         valid_augmentation=None,
         test_augmentation=None,
@@ -46,6 +49,9 @@ class LitDataModule(pl.LightningDataModule):
         super().__init__()
         self.data_path = data_path
         self.fold = fold
+        self.train_image_path = train_image_path
+        self.valid_image_path = valid_image_path
+        self.test_image_path = test_image_path
         self.train_augmentation = train_augmentation
         self.valid_augmentation = valid_augmentation
         self.test_augmentation = test_augmentation
@@ -63,15 +69,15 @@ class LitDataModule(pl.LightningDataModule):
         # TODO: we should pass the path(s) as an argument to the LitClassifier
         # constructor. In this way, this class will be more generalizable
         train_image_paths = [
-            self.data_path / f"train_128/{x}.jpg"
+            self.train_image_path / f"{x}.jpg"
             for x in df_train.StudyInstanceUID.values
         ]
         valid_image_paths = [
-            self.data_path / f"train_128/{x}.jpg"
+            self.valid_image_path / f"{x}.jpg"
             for x in df_valid.StudyInstanceUID.values
         ]
         test_image_paths = [
-            x for x in (self.data_path / "test_128").iterdir() if x.is_file()
+            x for x in self.test_image_path.iterdir() if x.is_file()
         ]
 
         train_targets = df_train.loc[:, target_cols].values
