@@ -73,10 +73,9 @@ stages:
     outs:
       - data/train_folds.csv
   train_resnet18_128:
-    cmd:
-      python pipe/train.py --fold -1 --arch resnet18 --metric multilabel_auc_macro
-      --opt sam --loss bce_with_logits --precision 16 --sz 128 --auto_batch_size power
-      --lr 0.1 --sched plateau --mom 0.9 --wd 0.0
+    cmd: python pipe/train.py --train_data train_128 --test_data test_128
+      --fold -1 --epochs 15 --arch resnet18 --sz 128 --batch_size 128
+      --lr 1 --sched onecycle
     deps:
       - data/train_folds.csv
       - pipe/train.py
@@ -100,10 +99,9 @@ stages:
       - metrics/arch=resnet18_sz=128.metric:
           cache: false
   train_resnet34_128:
-    cmd:
-      python pipe/train.py --fold -1 --arch resnet34 --metric multilabel_auc_macro
-      --opt sam --loss bce_with_logits --precision 16 --sz 128 --auto_batch_size power
-      --lr 0.1 --sched plateau --mom 0.9 --wd 0.0
+    cmd: python pipe/train.py --train_data train_128 --test_data test_128
+      --fold -1 --epochs 15 --arch resnet34 --sz 128 --batch_size 128
+      --lr 1 --sched onecycle
     deps:
       - data/train_folds.csv
       - pipe/train.py
@@ -127,10 +125,9 @@ stages:
       - metrics/arch=resnet34_sz=128.metric:
           cache: false
   train_resnet50_128:
-    cmd:
-      python pipe/train.py --fold -1 --arch resnet50 --metric multilabel_auc_macro
-      --opt sam --loss bce_with_logits --precision 16 --sz 128 --auto_batch_size power
-      --lr 0.1 --sched plateau --mom 0.9 --wd 0.0
+    cmd: python pipe/train.py --train_data train_128 --test_data test_128
+      --fold -1 --epochs 15 --arch resnet50 --sz 128 --batch_size 128
+      --lr 1 --sched onecycle
     deps:
       - data/train_folds.csv
       - pipe/train.py
@@ -155,9 +152,8 @@ stages:
           cache: false
   train_resnet18_256:
     cmd: python pipe/train.py --train_data train_256 --test_data test_256
-      --fold -1 --arch resnet18 --metric multilabel_auc_macro
-      --opt sam --loss bce_with_logits --precision 16 --sz 256 --auto_batch_size power
-      --lr 0.1 --sched plateau --mom 0.9 --wd 0.0
+      --fold -1 --epochs 15 --arch resnet18 --sz 256 --batch_size 128
+      --lr 1 --sched onecycle
     deps:
       - data/train_folds.csv
       - pipe/train.py
@@ -180,12 +176,10 @@ stages:
     metrics:
       - metrics/arch=resnet18_sz=256.metric:
           cache: false
-
   train_resnet18_512:
     cmd: python pipe/train.py --train_data train_512 --test_data test_512
-      --fold -1 --arch resnet18 --metric multilabel_auc_macro
-      --opt sam --loss bce_with_logits --precision 16 --sz 512 --auto_batch_size power
-      --lr 0.1 --sched plateau --mom 0.9 --wd 0.0
+      --fold -1 --epochs 15 --arch resnet18 --sz 512 --auto_batch_size power
+      --lr 1 --sched onecycle
     deps:
       - data/train_folds.csv
       - pipe/train.py

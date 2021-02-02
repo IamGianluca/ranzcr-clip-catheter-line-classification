@@ -16,3 +16,11 @@
 /arch=resnet18_sz=512_fold=2.csv
 /arch=resnet18_sz=512_fold=3.csv
 /arch=resnet18_sz=512_fold=4.csv
+/arch=resnet34_sz=128_fold=1.csv
+/arch=resnet34_sz=128_fold=2.csv
+/arch=resnet34_sz=128_fold=3.csv
+/arch=resnet34_sz=128_fold=4.csv
+/arch=resnet50_sz=128_fold=1.csv
+/arch=resnet50_sz=128_fold=2.csv
+/arch=resnet50_sz=128_fold=3.csv
+/arch=resnet50_sz=128_fold=4.csv

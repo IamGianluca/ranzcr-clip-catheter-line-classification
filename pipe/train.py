@@ -32,7 +32,7 @@ def parse_arguments(str2bool):
 
     # trainer
     parser.add_argument("--precision", type=int, default=16)
-    parser.add_argument("--metric", type=str)
+    parser.add_argument("--metric", type=str, default="multilabel_auc_macro")
     parser.add_argument("--epochs", type=int, default=1_000)
     parser.add_argument(
         "--fold",
@@ -51,11 +51,11 @@ def parse_arguments(str2bool):
     parser.add_argument("--auto_batch_size", type=str, default=None)
 
     # optimizer
-    parser.add_argument("--opt", type=str)
-    parser.add_argument("--loss", type=str)
+    parser.add_argument("--opt", type=str, default="sam")
+    parser.add_argument("--loss", type=str, default="bce_with_logits")
     parser.add_argument("--lr", type=float)
-    parser.add_argument("--wd", type=float)
-    parser.add_argument("--mom", type=float)
+    parser.add_argument("--wd", type=float, default=0.0)
+    parser.add_argument("--mom", type=float, default=0.9)
 
     # lr scheduler
     parser.add_argument(
@@ -64,8 +64,8 @@ def parse_arguments(str2bool):
     parser.add_argument("--sched", type=str, default="plateau")
 
     # callbacks
-    parser.add_argument("--patience", type=int, default=10)
-    parser.add_argument("--decay_rate", "--dr", type=float, default=0.1)
+    # parser.add_argument("--patience", type=int)
+    # parser.add_argument("--decay_rate", "--dr", type=float)
 
     # miscellaneous
     parser.add_argument("--verbose", type=bool)
@@ -158,21 +158,13 @@ def run(hparams: argparse.Namespace):
         filename=f"arch={hparams.arch}_sz={hparams.sz}_fold={hparams.fold}",
         save_weights_only=True,
     )
-    earlystopping_callback = callbacks.EarlyStopping(
-        monitor="valid_metric",
-        min_delta=0.0,
-        patience=5,
-        verbose=False,
-        mode="max",
-        strict=True,
-    )
 
     trainer = pl.Trainer(
         gpus=1,
         auto_lr_find=hparams.auto_lr,
         auto_scale_batch_size=hparams.auto_batch_size,
         max_epochs=hparams.epochs,
-        callbacks=[checkpoint_callback, earlystopping_callback],
+        callbacks=[checkpoint_callback],
     )
     if hparams.auto_lr or hparams.auto_batch_size:
         print("\nTuning...")

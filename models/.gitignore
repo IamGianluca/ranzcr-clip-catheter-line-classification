@@ -15,3 +15,11 @@
 /arch=resnet18_sz=512_fold=2.ckpt
 /arch=resnet18_sz=512_fold=3.ckpt
 /arch=resnet18_sz=512_fold=4.ckpt
+/arch=resnet34_sz=128_fold=1.ckpt
+/arch=resnet34_sz=128_fold=2.ckpt
+/arch=resnet34_sz=128_fold=3.ckpt
+/arch=resnet34_sz=128_fold=4.ckpt
+/arch=resnet50_sz=128_fold=1.ckpt
+/arch=resnet50_sz=128_fold=2.ckpt
+/arch=resnet50_sz=128_fold=3.ckpt
+/arch=resnet50_sz=128_fold=4.ckpt
