@@ -8,6 +8,7 @@ from torch.optim import lr_scheduler
 import torchvision.models as models
 from torch import nn
 from torch.optim.lr_scheduler import ReduceLROnPlateau
+from timm.models import create_model
 
 from .loss import loss_factory
 from .metrics import metric_factory
@@ -29,21 +30,12 @@ class LitClassifier(pl.LightningModule):
         # TODO: create model factory and incapsulate changes required to
         # work with inputs of different in_channels, num_classes,
         # non-linearity, etc.
-        self.model = models.__dict__[self.hparams.arch](pretrained=True)
-
-        # input has only 1 channel (black-white images) instead of RGB
-        self.model.conv1 = nn.Conv2d(
-            self.hparams.in_channels,
-            64,
-            kernel_size=7,
-            stride=2,
-            padding=3,
-            bias=False,
+        self.model = create_model(
+            model_name=self.hparams.arch,
+            pretrained=True,
+            num_classes=num_classes,
+            in_chans=in_channels,
         )
-
-        # output for multi-class/multi-label classification problem
-        in_features = self.model.fc.in_features
-        self.model.fc = nn.Linear(in_features, self.hparams.num_classes)
 
     def forward(self, x):
         x = self.model(torch.as_tensor(data=x, dtype=torch.float32))
