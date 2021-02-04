@@ -48,8 +48,11 @@ def lr_scheduler_factory(optimizer, hparams, data_loader):
     if hparams.sched == "onecycle":
         return lr_scheduler.OneCycleLR(
             optimizer=optimizer,
-            max_lr=hparams.lr * 10,
+            max_lr=hparams.lr,
             cycle_momentum=True,
+            pct_start=0.25,
+            div_factor=25.0,
+            final_div_factor=100000.0,
             steps_per_epoch=len(data_loader),
             epochs=hparams.epochs,
         )
