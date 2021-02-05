@@ -166,57 +166,57 @@ train_resnet18_128:
     md5: 7a364fa00309d9d50641ae5edcfabcd3
     size: 2978438
   - path: pipe/train.py
-    md5: 97ab92d24da766cb621b43d4749ec8c8
-    size: 7224
+    md5: fc7d9341d469c245c7f7377b1ad0c911
+    size: 7634
   outs:
   - path: metrics/arch=resnet18_sz=128.metric
-    md5: 7bcf15542cdad828d84e9599c7ade131
-    size: 31
+    md5: fbbfdf2564246d5ad2fb0ef8ae488c0b
+    size: 49
   - path: models/arch=resnet18_sz=128_fold=0.ckpt
-    md5: 46aa12b11a82742582fae117d884a905
+    md5: 3b8868be2860239676a480bfa4b68964
     size: 44787577
   - path: models/arch=resnet18_sz=128_fold=1.ckpt
-    md5: f4e19048fcc7fcf50fb511687a443809
+    md5: fc27124a1afad1a35c5a13a55ff6379d
     size: 44787577
   - path: models/arch=resnet18_sz=128_fold=2.ckpt
-    md5: 0858736c625e9f6fbd0f943ba4904525
+    md5: 630724680eea7f5436a8379f3a268c83
     size: 44787577
   - path: models/arch=resnet18_sz=128_fold=3.ckpt
-    md5: d137095a15681c98d5ee9942b89ae267
+    md5: c6563f9eadb1a26d0f228ec6be90a0c2
     size: 44787577
   - path: models/arch=resnet18_sz=128_fold=4.ckpt
-    md5: 8f4e693ba19a39e117e911f27af641f6
+    md5: 71df2a738fcb3fa57088f2b157fc5cda
     size: 44787577
   - path: subs/arch=resnet18_sz=128_fold=0.csv
-    md5: 2304ef549417a8da5b4509222bae6e75
-    size: 991810
+    md5: 1314a4c913bbd7d83a7cbd762c158ae9
+    size: 991719
   - path: subs/arch=resnet18_sz=128_fold=1.csv
-    md5: ee4351150d41f400168c63c832c03013
-    size: 992465
+    md5: 463fc0db18520683c97ae8051a3e11dd
+    size: 991340
   - path: subs/arch=resnet18_sz=128_fold=2.csv
-    md5: b8e9ef5295f3b218a11a5c1285b72834
-    size: 991429
+    md5: 5b480746b6d0adee52647cd7a84f9333
+    size: 991948
   - path: subs/arch=resnet18_sz=128_fold=3.csv
-    md5: eba8bd1d2d66cef8e7ceb86a7f184853
-    size: 990511
+    md5: 06f2458406e1f36da9e4a3db6db9bb07
+    size: 991792
   - path: subs/arch=resnet18_sz=128_fold=4.csv
-    md5: f4a6f56058c1fea758d52d73ab36c1c4
-    size: 992614
+    md5: 7d149ec5d69169e3eb3ae8bf0c2ce709
+    size: 992210
   - path: subs/oof/arch=resnet18_sz=128_fold=0.csv
-    md5: 8f3e3332a5d17555434c6dd7234b28f2
-    size: 1678289
+    md5: e38fded3025f514b0652061675a029fa
+    size: 1678521
   - path: subs/oof/arch=resnet18_sz=128_fold=1.csv
-    md5: 0624c9d8df80276f9539bcd207e24a3c
-    size: 1677789
+    md5: b9cd2de735762708e7b907cabeb70269
+    size: 1676744
   - path: subs/oof/arch=resnet18_sz=128_fold=2.csv
-    md5: b0e9f5126190de7a76e692254a6e5c61
-    size: 1679848
+    md5: adcc37477edbbe18b2c4942ad64ca088
+    size: 1680466
   - path: subs/oof/arch=resnet18_sz=128_fold=3.csv
-    md5: 69b8bb1f85d414608c837fed10b19e78
-    size: 1677052
+    md5: f0fa1edbed6c7e919f7fe629c3e7a3c8
+    size: 1679932
   - path: subs/oof/arch=resnet18_sz=128_fold=4.csv
-    md5: 0ae9f9a2fd196d4be26ed6c17c3bcdd6
-    size: 1678190
+    md5: ca63a8a7513c9b87a300bddaed6adc6c
+    size: 1675928
 train_resnet34_128:
   cmd: python pipe/train.py --train_data train_128 --test_data test_128 --fold -1
     --epochs 15 --arch resnet34 --sz 128 --batch_size 128 --lr 1 --sched onecycle

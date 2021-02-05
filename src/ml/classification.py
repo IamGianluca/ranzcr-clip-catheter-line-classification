@@ -25,6 +25,7 @@ class LitClassifier(pl.LightningModule):
     ) -> None:
         super().__init__()
         self.save_hyperparameters()
+        self.best_train_metric = None
         self.best_valid_metric = None
 
         # TODO: create model factory and incapsulate changes required to
@@ -140,6 +141,11 @@ class LitClassifier(pl.LightningModule):
                     or valid_metric > self.best_valid_metric
                 ):
                     self.best_valid_metric = valid_metric
+                if (
+                    self.best_train_metric is None
+                    or train_metric > self.best_train_metric
+                ):
+                    self.best_train_metric = train_metric
             except (KeyError, AttributeError):
                 # these errors occurs when in "tuning" mode (find optimal lr)
                 pass

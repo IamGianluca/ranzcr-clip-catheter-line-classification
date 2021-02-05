@@ -173,6 +173,7 @@ def run(hparams: argparse.Namespace):
     # train and validate model
     trainer.fit(model, dm)
     valid_metric = model.best_valid_metric
+    train_metric = model.best_train_metric
 
     # TODO: load best model, not just the latest
     fname = f"arch={hparams.arch}_sz={hparams.sz}_fold={hparams.fold}.csv"
@@ -196,7 +197,7 @@ def run(hparams: argparse.Namespace):
         fpath=submission_fpath,
     )
 
-    return valid_metric
+    return train_metric, valid_metric
 
 
 def create_submission(hparams, target_cols, dm, model, is_oof, fpath):
@@ -230,18 +231,28 @@ if __name__ == "__main__":
 
     if hparams.fold == -1:
         valid_scores = []
+        train_scores = []
         for current_fold in range(5):
             hparams.fold = current_fold
-            valid_scores.append(run(hparams=hparams))
+            train_score, valid_score = run(hparams=hparams)
+            valid_scores.append(valid_score)
+            train_scores.append(train_score)
 
         cv_metric = np.mean(valid_scores)
-        print(f"\nCV metric: {cv_metric:.4f}")
+        train_metric = np.mean(train_scores)
+        print(
+            f"\n{hparams.metric} // Train: {train_metric:.4f}, CV: {cv_metric:.4f}"
+        )
         with open(
             constants.metrics_path
             / f"arch={hparams.arch}_sz={hparams.sz}.metric",
             "w",
         ) as f:
-            f.write(f"CV {hparams.metric}: {cv_metric:.4f}")
+            f.write(
+                f"{hparams.metric} // Train: {train_metric:.4f}, CV: {cv_metric:.4f}"
+            )
     else:
-        valid_score = run(hparams=hparams)
-        print(f"\n Best valid {hparams.metric}: {valid_score:.4f}")
+        train_metric, valid_metric = run(hparams=hparams)
+        print(
+            f"\nBest {hparams.metric}: Train {train_metric:.4f}, Valid: {valid_metric:.4f}"
+        )
