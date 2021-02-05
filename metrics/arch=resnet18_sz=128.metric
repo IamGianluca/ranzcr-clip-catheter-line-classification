@@ -1,1 +1,1 @@
-CV multilabel_auc_macro: 0.8415
+multilabel_auc_macro // Train: 0.8685, CV: 0.8412
