@@ -23,3 +23,13 @@
 /arch=resnet50_sz=128_fold=2.csv
 /arch=resnet50_sz=128_fold=3.csv
 /arch=resnet50_sz=128_fold=4.csv
+/arch=tf_efficientnet_b4_ns_sz=128_fold=0.csv
+/arch=tf_efficientnet_b4_ns_sz=128_fold=1.csv
+/arch=tf_efficientnet_b4_ns_sz=128_fold=2.csv
+/arch=tf_efficientnet_b4_ns_sz=128_fold=3.csv
+/arch=tf_efficientnet_b4_ns_sz=128_fold=4.csv
+/arch=tf_efficientnet_b4_ns_sz=256_fold=0.csv
+/arch=tf_efficientnet_b4_ns_sz=256_fold=1.csv
+/arch=tf_efficientnet_b4_ns_sz=256_fold=2.csv
+/arch=tf_efficientnet_b4_ns_sz=256_fold=3.csv
+/arch=tf_efficientnet_b4_ns_sz=256_fold=4.csv
