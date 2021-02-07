@@ -23,3 +23,8 @@
 /arch=resnet50_sz=128_fold=2.ckpt
 /arch=resnet50_sz=128_fold=3.ckpt
 /arch=resnet50_sz=128_fold=4.ckpt
+/arch=tf_efficientnet_b4_ns_sz=128_fold=0.ckpt
+/arch=tf_efficientnet_b4_ns_sz=128_fold=1.ckpt
+/arch=tf_efficientnet_b4_ns_sz=128_fold=2.ckpt
+/arch=tf_efficientnet_b4_ns_sz=128_fold=3.ckpt
+/arch=tf_efficientnet_b4_ns_sz=128_fold=4.ckpt

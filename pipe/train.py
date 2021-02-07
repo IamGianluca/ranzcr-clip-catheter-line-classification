@@ -2,6 +2,7 @@ import argparse
 
 import albumentations
 import albumentations.augmentations.transforms as A
+from albumentations.core.composition import OneOf
 import numpy as np
 import pandas as pd
 import pytorch_lightning as pl
@@ -92,6 +93,7 @@ def run(hparams: argparse.Namespace):
     std = 0.2295
     train_augmentation = albumentations.Compose(
         [
+            albumentations.HorizontalFlip(p=0.25),
             albumentations.ShiftScaleRotate(
                 shift_limit=0.0625, scale_limit=0.1, rotate_limit=10, p=0.8
             ),
@@ -102,6 +104,19 @@ def run(hparams: argparse.Namespace):
                     ),
                 ],
                 p=0.5,
+            ),
+            albumentations.OneOf(
+                [
+                    albumentations.OpticalDistortion(),
+                    albumentations.ElasticTransform(),
+                ],
+                p=0.25,
+            ),
+            albumentations.Cutout(
+                p=0.25,
+                num_holes=8,
+                max_h_size=int(hparams.sz * 0.1),
+                max_w_size=int(hparams.sz * 0.1),
             ),
             albumentations.Normalize(
                 mean, std, max_pixel_value=255.0, always_apply=True

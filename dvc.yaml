@@ -98,31 +98,31 @@ stages:
     metrics:
       - metrics/arch=resnet18_sz=128.metric:
           cache: false
-  train_resnet34_128:
+  train_efficientnet_b4_128:
     cmd: python pipe/train.py --train_data train_128 --test_data test_128
-      --fold -1 --epochs 15 --arch resnet34 --sz 128 --batch_size 128
+      --fold -1 --epochs 15 --arch tf_efficientnet_b4_ns --sz 128 --batch_size 64
       --lr 1 --sched onecycle
     deps:
       - data/train_folds.csv
       - pipe/train.py
     outs:
-      - models/arch=resnet34_sz=128_fold=0.ckpt
-      - models/arch=resnet34_sz=128_fold=1.ckpt
-      - models/arch=resnet34_sz=128_fold=2.ckpt
-      - models/arch=resnet34_sz=128_fold=3.ckpt
-      - models/arch=resnet34_sz=128_fold=4.ckpt
-      - subs/oof/arch=resnet34_sz=128_fold=0.csv
-      - subs/oof/arch=resnet34_sz=128_fold=1.csv
-      - subs/oof/arch=resnet34_sz=128_fold=2.csv
-      - subs/oof/arch=resnet34_sz=128_fold=3.csv
-      - subs/oof/arch=resnet34_sz=128_fold=4.csv
-      - subs/arch=resnet34_sz=128_fold=0.csv
-      - subs/arch=resnet34_sz=128_fold=1.csv
-      - subs/arch=resnet34_sz=128_fold=2.csv
-      - subs/arch=resnet34_sz=128_fold=3.csv
-      - subs/arch=resnet34_sz=128_fold=4.csv
+      - models/arch=tf_efficientnet_b4_ns_sz=128_fold=0.ckpt
+      - models/arch=tf_efficientnet_b4_ns_sz=128_fold=1.ckpt
+      - models/arch=tf_efficientnet_b4_ns_sz=128_fold=2.ckpt
+      - models/arch=tf_efficientnet_b4_ns_sz=128_fold=3.ckpt
+      - models/arch=tf_efficientnet_b4_ns_sz=128_fold=4.ckpt
+      - subs/oof/arch=tf_efficientnet_b4_ns_sz=128_fold=0.csv
+      - subs/oof/arch=tf_efficientnet_b4_ns_sz=128_fold=1.csv
+      - subs/oof/arch=tf_efficientnet_b4_ns_sz=128_fold=2.csv
+      - subs/oof/arch=tf_efficientnet_b4_ns_sz=128_fold=3.csv
+      - subs/oof/arch=tf_efficientnet_b4_ns_sz=128_fold=4.csv
+      - subs/arch=tf_efficientnet_b4_ns_sz=128_fold=0.csv
+      - subs/arch=tf_efficientnet_b4_ns_sz=128_fold=1.csv
+      - subs/arch=tf_efficientnet_b4_ns_sz=128_fold=2.csv
+      - subs/arch=tf_efficientnet_b4_ns_sz=128_fold=3.csv
+      - subs/arch=tf_efficientnet_b4_ns_sz=128_fold=4.csv
     metrics:
-      - metrics/arch=resnet34_sz=128.metric:
+      - metrics/arch=tf_efficientnet_b4_ns_sz=128.metric:
           cache: false
   train_resnet50_128:
     cmd: python pipe/train.py --train_data train_128 --test_data test_128
