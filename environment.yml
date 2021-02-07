@@ -50,11 +50,11 @@ dependencies:
   - brunsli=0.1=h9c3ff4c_0
   - bzip2=1.0.8=h7f98852_4
   - c-ares=1.17.1=h36c2ea0_0
-  - ca-certificates=2021.1.19=h06a4308_0
+  - ca-certificates=2020.12.5=ha878542_0
   - cachetools=4.1.1=py_0
   - cairo=1.16.0=hcf35c78_1003
   - catboost=0.24.4=py37h89c1867_0
-  - certifi=2020.12.5=py37h06a4308_0
+  - certifi=2020.12.5=py37h89c1867_1
   - cffi=1.14.4=py37h11fe52a_0
   - cfitsio=3.470=hb418390_7
   - chardet=3.0.4=py37he5f6b98_1008
@@ -314,7 +314,7 @@ dependencies:
   - openh264=2.1.1=h780b84a_0
   - openjdk=11.0.8=hacce0ff_0
   - openjpeg=2.3.1=hf7af979_3
-  - openssl=1.1.1i=h27cfd23_0
+  - openssl=1.1.1i=h7f98852_0
   - orc=1.6.5=hd3605a7_0
   - oss2=2.13.1=py37h89c1867_0
   - packaging=20.8=pyhd3deb0d_0
@@ -440,6 +440,7 @@ dependencies:
   - thrift_sasl=0.4.2=py37h8f50634_0
   - tifffile=2020.12.8=pyhd8ed1ab_0
   - tiledb=1.7.7=h8efa9f0_3
+  - timm=0.3.4=pyhd8ed1ab_0
   - tk=8.6.10=h21135ba_1
   - toml=0.10.2=pyhd8ed1ab_0
   - toolz=0.11.1=py_0
