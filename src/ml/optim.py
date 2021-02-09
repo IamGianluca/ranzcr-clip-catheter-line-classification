@@ -94,14 +94,16 @@ class SAM(SGD):
         self.param_groups[0]["rho"] = rho
 
     @torch.no_grad()
-    def step(self, closure) -> torch.Tensor:
+    def step(self, closure=None) -> torch.Tensor:
         """
         Args:
             closure: A closure that reevaluates the model and returns the loss.
         Returns: the loss value evaluated on the original point
         """
-        closure = torch.enable_grad()(closure)
-        loss = closure().detach()
+        loss = None
+        if closure is not None:
+            closure = torch.enable_grad()(closure)
+            loss = closure().detach()
 
         for group in self.param_groups:
             grads = []
@@ -127,7 +129,8 @@ class SAM(SGD):
             # virtual step toward \epsilon
             torch._foreach_add_(params_with_grads, epsilon)
             # compute g=\nabla_w L_B(w)|_{w+\hat{\epsilon}}
-            closure()
+            if closure is not None:
+                closure()
             # virtual step back to the original point
             torch._foreach_sub_(params_with_grads, epsilon)
 
