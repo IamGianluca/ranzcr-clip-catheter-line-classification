@@ -73,7 +73,7 @@ stages:
     outs:
       - data/train_folds.csv
   train_resnet18_128:
-    cmd: python pipe/train.py --train_data train_128 --test_data test_128
+    cmd: python pipe/train.py --train_data train_256 --test_data test_256
       --fold -1 --epochs 15 --arch resnet18 --sz 128 --batch_size 128
       --lr 1 --sched onecycle
     deps:

@@ -15,7 +15,7 @@ from .metrics import metric_factory
 from .optim import optimizer_factory, lr_scheduler_factory
 
 
-class LitClassifier(pl.LightningModule):
+class ImageClassifier(pl.LightningModule):
     def __init__(
         self,
         in_channels: int,
