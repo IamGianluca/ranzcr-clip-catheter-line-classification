@@ -39,7 +39,7 @@ class LitClassifier(pl.LightningModule):
         )
 
     def forward(self, x):
-        x = self.model(torch.as_tensor(data=x, dtype=torch.float32))
+        x = self.model(torch.as_tensor(data=x))
         return x
 
     def configure_optimizers(self):

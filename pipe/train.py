@@ -176,6 +176,7 @@ def run(hparams: argparse.Namespace):
 
     trainer = pl.Trainer(
         gpus=1,
+        precision=hparams.precision,
         auto_lr_find=hparams.auto_lr,
         auto_scale_batch_size=hparams.auto_batch_size,
         max_epochs=hparams.epochs,
