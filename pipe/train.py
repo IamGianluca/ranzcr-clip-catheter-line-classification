@@ -94,9 +94,6 @@ def run(hparams: argparse.Namespace):
     train_augmentation = albumentations.Compose(
         [
             albumentations.HorizontalFlip(p=0.25),
-            albumentations.ShiftScaleRotate(
-                shift_limit=0.0625, scale_limit=0.1, rotate_limit=10, p=0.8
-            ),
             albumentations.OneOf(
                 [
                     albumentations.RandomBrightnessContrast(
@@ -118,6 +115,11 @@ def run(hparams: argparse.Namespace):
                 max_h_size=int(hparams.sz * 0.1),
                 max_w_size=int(hparams.sz * 0.1),
             ),
+            albumentations.ShiftScaleRotate(
+                shift_limit=0.0625, scale_limit=0.1, rotate_limit=10, p=0.8
+            ),
+            albumentations.RandomCrop(int(256 * 0.9), int(256 * 0.9)),
+            albumentations.Resize(height=hparams.sz, width=hparams.sz),
             albumentations.Normalize(
                 mean, std, max_pixel_value=255.0, always_apply=True
             ),
@@ -126,6 +128,8 @@ def run(hparams: argparse.Namespace):
     )
     valid_augmentation = albumentations.Compose(
         [
+            albumentations.CenterCrop(int(256 * 0.9), int(256 * 0.9)),
+            albumentations.Resize(height=hparams.sz, width=hparams.sz),
             albumentations.Normalize(
                 mean, std, max_pixel_value=255.0, always_apply=True
             ),
@@ -134,6 +138,8 @@ def run(hparams: argparse.Namespace):
     )
     test_augmentation = albumentations.Compose(
         [
+            albumentations.CenterCrop(int(256 * 0.9), int(256 * 0.9)),
+            albumentations.Resize(height=hparams.sz, width=hparams.sz),
             albumentations.Normalize(
                 mean, std, max_pixel_value=255.0, always_apply=True
             ),
@@ -159,7 +165,7 @@ def run(hparams: argparse.Namespace):
     )
     dm.setup()
 
-    model = classification.LitClassifier(
+    model = classification.ImageClassifier(
         target_cols=target_cols,
         in_channels=1,
         num_classes=len(target_cols),
