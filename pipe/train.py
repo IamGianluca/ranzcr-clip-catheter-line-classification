@@ -91,6 +91,10 @@ def run(hparams: argparse.Namespace):
 
     mean = 0.485
     std = 0.2295
+
+    # TODO: more elegant way of doing this
+    input_image_sz = int(hparams.train_data.name.split("_")[1])
+
     train_augmentation = albumentations.Compose(
         [
             albumentations.HorizontalFlip(p=0.25),
@@ -118,7 +122,9 @@ def run(hparams: argparse.Namespace):
             albumentations.ShiftScaleRotate(
                 shift_limit=0.0625, scale_limit=0.1, rotate_limit=10, p=0.8
             ),
-            albumentations.RandomCrop(int(256 * 0.9), int(256 * 0.9)),
+            albumentations.RandomCrop(
+                int(input_image_sz * 0.9), int(input_image_sz * 0.9)
+            ),
             albumentations.Resize(height=hparams.sz, width=hparams.sz),
             albumentations.Normalize(
                 mean, std, max_pixel_value=255.0, always_apply=True
@@ -128,7 +134,9 @@ def run(hparams: argparse.Namespace):
     )
     valid_augmentation = albumentations.Compose(
         [
-            albumentations.CenterCrop(int(256 * 0.9), int(256 * 0.9)),
+            albumentations.CenterCrop(
+                int(input_image_sz * 0.9), int(input_image_sz * 0.9)
+            ),
             albumentations.Resize(height=hparams.sz, width=hparams.sz),
             albumentations.Normalize(
                 mean, std, max_pixel_value=255.0, always_apply=True
