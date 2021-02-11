@@ -73,9 +73,9 @@ stages:
     outs:
       - data/train_folds.csv
   train_resnet18_128:
-    cmd: python pipe/train.py --train_data train_256 --test_data test_256
-      --fold -1 --epochs 15 --arch resnet18 --sz 128 --batch_size 128
-      --lr 1 --sched onecycle
+    cmd:
+      python pipe/train.py --train_data train_256 --test_data test_256 --fold -1
+      --epochs 15 --arch resnet18 --sz 128 --batch_size 128 --lr 1 --sched onecycle
     deps:
       - data/train_folds.csv
       - pipe/train.py
@@ -98,62 +98,11 @@ stages:
     metrics:
       - metrics/arch=resnet18_sz=128.metric:
           cache: false
-  train_efficientnet_b4_128:
-    cmd: python pipe/train.py --train_data train_128 --test_data test_128
-      --fold -1 --epochs 15 --arch tf_efficientnet_b4_ns --sz 128 --batch_size 64
-      --lr 1 --sched onecycle
-    deps:
-      - data/train_folds.csv
-      - pipe/train.py
-    outs:
-      - models/arch=tf_efficientnet_b4_ns_sz=128_fold=0.ckpt
-      - models/arch=tf_efficientnet_b4_ns_sz=128_fold=1.ckpt
-      - models/arch=tf_efficientnet_b4_ns_sz=128_fold=2.ckpt
-      - models/arch=tf_efficientnet_b4_ns_sz=128_fold=3.ckpt
-      - models/arch=tf_efficientnet_b4_ns_sz=128_fold=4.ckpt
-      - subs/oof/arch=tf_efficientnet_b4_ns_sz=128_fold=0.csv
-      - subs/oof/arch=tf_efficientnet_b4_ns_sz=128_fold=1.csv
-      - subs/oof/arch=tf_efficientnet_b4_ns_sz=128_fold=2.csv
-      - subs/oof/arch=tf_efficientnet_b4_ns_sz=128_fold=3.csv
-      - subs/oof/arch=tf_efficientnet_b4_ns_sz=128_fold=4.csv
-      - subs/arch=tf_efficientnet_b4_ns_sz=128_fold=0.csv
-      - subs/arch=tf_efficientnet_b4_ns_sz=128_fold=1.csv
-      - subs/arch=tf_efficientnet_b4_ns_sz=128_fold=2.csv
-      - subs/arch=tf_efficientnet_b4_ns_sz=128_fold=3.csv
-      - subs/arch=tf_efficientnet_b4_ns_sz=128_fold=4.csv
-    metrics:
-      - metrics/arch=tf_efficientnet_b4_ns_sz=128.metric:
-          cache: false
-  train_resnet50_128:
-    cmd: python pipe/train.py --train_data train_128 --test_data test_128
-      --fold -1 --epochs 15 --arch resnet50 --sz 128 --batch_size 128
-      --lr 1 --sched onecycle
-    deps:
-      - data/train_folds.csv
-      - pipe/train.py
-    outs:
-      - models/arch=resnet50_sz=128_fold=0.ckpt
-      - models/arch=resnet50_sz=128_fold=1.ckpt
-      - models/arch=resnet50_sz=128_fold=2.ckpt
-      - models/arch=resnet50_sz=128_fold=3.ckpt
-      - models/arch=resnet50_sz=128_fold=4.ckpt
-      - subs/oof/arch=resnet50_sz=128_fold=0.csv
-      - subs/oof/arch=resnet50_sz=128_fold=1.csv
-      - subs/oof/arch=resnet50_sz=128_fold=2.csv
-      - subs/oof/arch=resnet50_sz=128_fold=3.csv
-      - subs/oof/arch=resnet50_sz=128_fold=4.csv
-      - subs/arch=resnet50_sz=128_fold=0.csv
-      - subs/arch=resnet50_sz=128_fold=1.csv
-      - subs/arch=resnet50_sz=128_fold=2.csv
-      - subs/arch=resnet50_sz=128_fold=3.csv
-      - subs/arch=resnet50_sz=128_fold=4.csv
-    metrics:
-      - metrics/arch=resnet50_sz=128.metric:
-          cache: false
   train_efficientnet_b4_256:
-    cmd: python pipe/train.py --train_data train_256 --test_data test_256
-      --fold -1 --epochs 15 --arch tf_efficientnet_b4_ns --sz 256 --batch_size 22
-      --lr 1 --sched onecycle
+    cmd:
+      python pipe/train.py --train_data train_512 --test_data test_512 --fold -1
+      --epochs 10 --arch tf_efficientnet_b4_ns --sz 256 --batch_size 22 --lr 1 --sched
+      onecycle
     deps:
       - data/train_folds.csv
       - pipe/train.py
@@ -176,29 +125,29 @@ stages:
     metrics:
       - metrics/arch=tf_efficientnet_b4_ns_sz=256.metric:
           cache: false
-  train_resnet18_512:
-    cmd: python pipe/train.py --train_data train_512 --test_data test_512
-      --fold -1 --epochs 15 --arch resnet18 --sz 512 --auto_batch_size power
-      --lr 1 --sched onecycle
+  train_efficientnet_b4_512:
+    cmd:
+      python pipe/train.py --train_data train_1024 --test_data test_1024 --fold -1
+      --epochs 5 --arch tf_efficientnet_b4_ns --sz 512 --batch_size 32 --lr 1 --sched onecycle
     deps:
       - data/train_folds.csv
       - pipe/train.py
     outs:
-      - models/arch=resnet18_sz=512_fold=0.ckpt
-      - models/arch=resnet18_sz=512_fold=1.ckpt
-      - models/arch=resnet18_sz=512_fold=2.ckpt
-      - models/arch=resnet18_sz=512_fold=3.ckpt
-      - models/arch=resnet18_sz=512_fold=4.ckpt
-      - subs/oof/arch=resnet18_sz=512_fold=0.csv
-      - subs/oof/arch=resnet18_sz=512_fold=1.csv
-      - subs/oof/arch=resnet18_sz=512_fold=2.csv
-      - subs/oof/arch=resnet18_sz=512_fold=3.csv
-      - subs/oof/arch=resnet18_sz=512_fold=4.csv
-      - subs/arch=resnet18_sz=512_fold=0.csv
-      - subs/arch=resnet18_sz=512_fold=1.csv
-      - subs/arch=resnet18_sz=512_fold=2.csv
-      - subs/arch=resnet18_sz=512_fold=3.csv
-      - subs/arch=resnet18_sz=512_fold=4.csv
+      - models/arch=tf_efficientnet_b4_ns_sz=512_fold=0.ckpt
+      - models/arch=tf_efficientnet_b4_ns_sz=512_fold=1.ckpt
+      - models/arch=tf_efficientnet_b4_ns_sz=512_fold=2.ckpt
+      - models/arch=tf_efficientnet_b4_ns_sz=512_fold=3.ckpt
+      - models/arch=tf_efficientnet_b4_ns_sz=512_fold=4.ckpt
+      - subs/oof/arch=tf_efficientnet_b4_ns_sz=512_fold=0.csv
+      - subs/oof/arch=tf_efficientnet_b4_ns_sz=512_fold=1.csv
+      - subs/oof/arch=tf_efficientnet_b4_ns_sz=512_fold=2.csv
+      - subs/oof/arch=tf_efficientnet_b4_ns_sz=512_fold=3.csv
+      - subs/oof/arch=tf_efficientnet_b4_ns_sz=512_fold=4.csv
+      - subs/arch=tf_efficientnet_b4_ns_sz=512_fold=0.csv
+      - subs/arch=tf_efficientnet_b4_ns_sz=512_fold=1.csv
+      - subs/arch=tf_efficientnet_b4_ns_sz=512_fold=2.csv
+      - subs/arch=tf_efficientnet_b4_ns_sz=512_fold=3.csv
+      - subs/arch=tf_efficientnet_b4_ns_sz=512_fold=4.csv
     metrics:
-      - metrics/arch=resnet18_sz=512.metric:
+      - metrics/arch=tf_efficientnet_b4_ns_sz=512.metric:
           cache: false

@@ -217,125 +217,6 @@ train_resnet18_128:
   - path: subs/oof/arch=resnet18_sz=128_fold=4.csv
     md5: 7d596cde49752a098c4631e07acac106
     size: 1680667
-train_efficientnet_b4_128:
-  cmd: python pipe/train.py --train_data train_128 --test_data test_128 --fold -1
-    --epochs 15 --arch tf_efficientnet_b4_ns --sz 128 --batch_size 64 --lr 1 --sched
-    onecycle
-  deps:
-  - path: data/train_folds.csv
-    md5: 7a364fa00309d9d50641ae5edcfabcd3
-    size: 2978438
-  - path: pipe/train.py
-    md5: 2dfbac030cc5c89a17585ef832abdd7b
-    size: 8159
-  outs:
-  - path: metrics/arch=tf_efficientnet_b4_ns_sz=128.metric
-    md5: 437385f970aa5b8731838799e33f8e25
-    size: 49
-  - path: models/arch=tf_efficientnet_b4_ns_sz=128_fold=0.ckpt
-    md5: 79be9c86427c4f08c789227a8e4a495c
-    size: 71032001
-  - path: models/arch=tf_efficientnet_b4_ns_sz=128_fold=1.ckpt
-    md5: 55401609db9004b0f143477d57c62316
-    size: 71032001
-  - path: models/arch=tf_efficientnet_b4_ns_sz=128_fold=2.ckpt
-    md5: 377211c6cabcc642ffebdf484febc3ca
-    size: 71032001
-  - path: models/arch=tf_efficientnet_b4_ns_sz=128_fold=3.ckpt
-    md5: 8739960a79ef618fdc4c061e0a850e76
-    size: 71032001
-  - path: models/arch=tf_efficientnet_b4_ns_sz=128_fold=4.ckpt
-    md5: 8e48f3eca40b08f0c68980dcbc3ca54d
-    size: 71032001
-  - path: subs/arch=tf_efficientnet_b4_ns_sz=128_fold=0.csv
-    md5: d30b95b13361dcc85226e3592092568c
-    size: 989865
-  - path: subs/arch=tf_efficientnet_b4_ns_sz=128_fold=1.csv
-    md5: 05b8bf97294b54c53c8cd36055e8b131
-    size: 993194
-  - path: subs/arch=tf_efficientnet_b4_ns_sz=128_fold=2.csv
-    md5: bc548ec303e88a1f76e9a732e5acf034
-    size: 990972
-  - path: subs/arch=tf_efficientnet_b4_ns_sz=128_fold=3.csv
-    md5: 1236b83d6f777f107699e8e8895d5ed1
-    size: 991199
-  - path: subs/arch=tf_efficientnet_b4_ns_sz=128_fold=4.csv
-    md5: b563c4afe99bfa00638266d17e7ee137
-    size: 991533
-  - path: subs/oof/arch=tf_efficientnet_b4_ns_sz=128_fold=0.csv
-    md5: efcf3dc4633f0099bec4904b5ba5ad28
-    size: 1674420
-  - path: subs/oof/arch=tf_efficientnet_b4_ns_sz=128_fold=1.csv
-    md5: c8b3408e8fa47a3677c7563d721010bb
-    size: 1676963
-  - path: subs/oof/arch=tf_efficientnet_b4_ns_sz=128_fold=2.csv
-    md5: b132fa30505e612f238f0887b63c304f
-    size: 1677411
-  - path: subs/oof/arch=tf_efficientnet_b4_ns_sz=128_fold=3.csv
-    md5: 9b073256c4d4d04bd387e3b22f1d535a
-    size: 1678125
-  - path: subs/oof/arch=tf_efficientnet_b4_ns_sz=128_fold=4.csv
-    md5: aaaf1c8789b9e5a3144392196b8a4789
-    size: 1674484
-train_resnet50_128:
-  cmd: python pipe/train.py --train_data train_128 --test_data test_128 --fold -1
-    --epochs 15 --arch resnet50 --sz 128 --batch_size 128 --lr 1 --sched onecycle
-  deps:
-  - path: data/train_folds.csv
-    md5: 7a364fa00309d9d50641ae5edcfabcd3
-    size: 2978438
-  - path: pipe/train.py
-    md5: 97ab92d24da766cb621b43d4749ec8c8
-    size: 7224
-  outs:
-  - path: metrics/arch=resnet50_sz=128.metric
-    md5: da6d582c6b2da17664710616d2cb9448
-    size: 31
-  - path: models/arch=resnet50_sz=128_fold=0.ckpt
-    md5: 188b2b5b71b0bea01647fed1cfd6ea48
-    size: 94425647
-  - path: models/arch=resnet50_sz=128_fold=1.ckpt
-    md5: 36395c2386abf134a8aa451aaea0d0d0
-    size: 94425647
-  - path: models/arch=resnet50_sz=128_fold=2.ckpt
-    md5: 108650a94d9f0060e212a615db46326f
-    size: 94425647
-  - path: models/arch=resnet50_sz=128_fold=3.ckpt
-    md5: 5e3731c65b0c1e521f6f588e8862b8ab
-    size: 94425647
-  - path: models/arch=resnet50_sz=128_fold=4.ckpt
-    md5: 62c3510d72653ce84d0c953f6f4ffedb
-    size: 94425647
-  - path: subs/arch=resnet50_sz=128_fold=0.csv
-    md5: 3acf19864b39df060df0822d39960985
-    size: 989700
-  - path: subs/arch=resnet50_sz=128_fold=1.csv
-    md5: 9a46b7aa3fc18481e782ff048274292a
-    size: 991393
-  - path: subs/arch=resnet50_sz=128_fold=2.csv
-    md5: a1e1373655c38a6b6812fada44ad25a8
-    size: 994491
-  - path: subs/arch=resnet50_sz=128_fold=3.csv
-    md5: 5ceedcc50163fafb20803aa800a1ae34
-    size: 990590
-  - path: subs/arch=resnet50_sz=128_fold=4.csv
-    md5: 89c0433202169d6d65d7f2f54f7e032f
-    size: 989975
-  - path: subs/oof/arch=resnet50_sz=128_fold=0.csv
-    md5: b07199dff5c31dad3a527c7c2a1dc643
-    size: 1675007
-  - path: subs/oof/arch=resnet50_sz=128_fold=1.csv
-    md5: 5f9dd80e9a963c641cd3f98a66a1d15e
-    size: 1677014
-  - path: subs/oof/arch=resnet50_sz=128_fold=2.csv
-    md5: 09eea9956ed72396961541a0b6b0ff92
-    size: 1685322
-  - path: subs/oof/arch=resnet50_sz=128_fold=3.csv
-    md5: 987b516d46566943bf59ff1f04c2467c
-    size: 1678375
-  - path: subs/oof/arch=resnet50_sz=128_fold=4.csv
-    md5: 30b3b45a9b2c0c2eb45428c1283d366f
-    size: 1675072
 train_resnet18_256:
   cmd: python pipe/train.py --train_data train_256 --test_data test_256 --fold -1
     --epochs 15 --arch resnet18 --sz 256 --batch_size 128 --lr 1 --sched onecycle
@@ -514,3 +395,63 @@ train_efficientnet_b4_256:
   - path: subs/oof/arch=tf_efficientnet_b4_ns_sz=256_fold=4.csv
     md5: 57509c9dcad5e1cb1ebb909220cdb203
     size: 1671019
+train_efficientnet_b4_512:
+  cmd: python pipe/train.py --train_data train_1024 --test_data test_1024 --fold -1
+    --epochs 5 --arch tf_efficientnet_b4_ns --sz 512 --batch_size 32 --lr 1 --sched
+    onecycle
+  deps:
+  - path: data/train_folds.csv
+    md5: 7a364fa00309d9d50641ae5edcfabcd3
+    size: 2978438
+  - path: pipe/train.py
+    md5: 9fa4cbc5ffe416f796e046ab1f5b97aa
+    size: 8840
+  outs:
+  - path: metrics/arch=tf_efficientnet_b4_ns_sz=512.metric
+    md5: 8f249f493c246e633f4feaf66fe0755d
+    size: 49
+  - path: models/arch=tf_efficientnet_b4_ns_sz=512_fold=0.ckpt
+    md5: b50c09f05c3fa2edd67cf5d8f56e9f4b
+    size: 71032001
+  - path: models/arch=tf_efficientnet_b4_ns_sz=512_fold=1.ckpt
+    md5: 4e9fd595aebb4eab6e93ba71b6e685e7
+    size: 71032001
+  - path: models/arch=tf_efficientnet_b4_ns_sz=512_fold=2.ckpt
+    md5: 0c0d03a0ff939f067e048a1c96f9ead0
+    size: 71032001
+  - path: models/arch=tf_efficientnet_b4_ns_sz=512_fold=3.ckpt
+    md5: cebf80349f593f420722dbaacdfb1e03
+    size: 71032001
+  - path: models/arch=tf_efficientnet_b4_ns_sz=512_fold=4.ckpt
+    md5: ad292afdefcb7106bf1d8bbb34034d31
+    size: 71032001
+  - path: subs/arch=tf_efficientnet_b4_ns_sz=512_fold=0.csv
+    md5: 2a9d108e226095387969d7854505149b
+    size: 999503
+  - path: subs/arch=tf_efficientnet_b4_ns_sz=512_fold=1.csv
+    md5: b071f6b03cb4bcaceeb8eea8a7cfaf20
+    size: 999754
+  - path: subs/arch=tf_efficientnet_b4_ns_sz=512_fold=2.csv
+    md5: 0464bc8e1ba695af872b7ef8afe1f408
+    size: 1000900
+  - path: subs/arch=tf_efficientnet_b4_ns_sz=512_fold=3.csv
+    md5: 160d19a783da83ed81ca79ff558b971d
+    size: 998228
+  - path: subs/arch=tf_efficientnet_b4_ns_sz=512_fold=4.csv
+    md5: 5e7a2b18cab6a080dd7f3cd7a66ed0fd
+    size: 996537
+  - path: subs/oof/arch=tf_efficientnet_b4_ns_sz=512_fold=0.csv
+    md5: d5f5c9c7b4eaef7e9d8bd2ec4594c737
+    size: 1668531
+  - path: subs/oof/arch=tf_efficientnet_b4_ns_sz=512_fold=1.csv
+    md5: 5dec21676d59981c849ffdb65f5c1dff
+    size: 1671022
+  - path: subs/oof/arch=tf_efficientnet_b4_ns_sz=512_fold=2.csv
+    md5: a2eb95d767e19210db53c513008a974f
+    size: 1671474
+  - path: subs/oof/arch=tf_efficientnet_b4_ns_sz=512_fold=3.csv
+    md5: b8174b190fe201af011a49ec9682e4aa
+    size: 1670604
+  - path: subs/oof/arch=tf_efficientnet_b4_ns_sz=512_fold=4.csv
+    md5: e9468e76b7672018833b04f1c28adfa2
+    size: 1673483

@@ -28,9 +28,6 @@ class ImageClassifier(pl.LightningModule):
         self.best_train_metric = None
         self.best_valid_metric = None
 
-        # TODO: create model factory and incapsulate changes required to
-        # work with inputs of different in_channels, num_classes,
-        # non-linearity, etc.
         self.model = create_model(
             model_name=self.hparams.arch,
             pretrained=True,
