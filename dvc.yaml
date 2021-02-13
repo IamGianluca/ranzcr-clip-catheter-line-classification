@@ -76,6 +76,7 @@ stages:
     cmd:
       python pipe/train.py --train_data train_256 --test_data test_256 --fold -1
       --epochs 15 --arch resnet18 --sz 128 --batch_size 128 --lr 1 --sched onecycle
+      --aug baseline
     deps:
       - data/train_folds.csv
       - pipe/train.py
@@ -101,8 +102,8 @@ stages:
   train_efficientnet_b4_256:
     cmd:
       python pipe/train.py --train_data train_512 --test_data test_512 --fold -1
-      --epochs 10 --arch tf_efficientnet_b4_ns --sz 256 --batch_size 22 --lr 1 --sched
-      onecycle
+      --epochs 10 --arch tf_efficientnet_b4_ns --sz 256 --batch_size 22 --lr 1 --sched onecycle
+      --aug baseline
     deps:
       - data/train_folds.csv
       - pipe/train.py
@@ -129,6 +130,7 @@ stages:
     cmd:
       python pipe/train.py --train_data train_1024 --test_data test_1024 --fold -1
       --epochs 5 --arch tf_efficientnet_b4_ns --sz 512 --batch_size 32 --lr 1 --sched onecycle
+      --aug baseline
     deps:
       - data/train_folds.csv
       - pipe/train.py
