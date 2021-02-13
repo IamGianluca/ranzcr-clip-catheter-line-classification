@@ -8,9 +8,10 @@ import pandas as pd
 import pytorch_lightning as pl
 from albumentations.pytorch import transforms
 from pytorch_lightning import callbacks
+import augmentations
 
 from ml import classification, data
-from pipe import constants
+from pipe import constants, augmentations
 
 
 def str2bool(v):
@@ -43,6 +44,7 @@ def parse_arguments(str2bool):
 
     # architecture
     parser.add_argument("--arch", type=str)
+    parser.add_argument("--aug", type=str)
 
     # data loader
     parser.add_argument("--train_data", type=str2path)
@@ -89,71 +91,11 @@ def run(hparams: argparse.Namespace):
         "Swan Ganz Catheter Present",
     ]
 
-    mean = 0.485
-    std = 0.2295
-
-    # TODO: more elegant way of doing this
-    input_image_sz = int(hparams.train_data.name.split("_")[1])
-
-    train_augmentation = albumentations.Compose(
-        [
-            albumentations.HorizontalFlip(p=0.25),
-            albumentations.OneOf(
-                [
-                    albumentations.RandomBrightnessContrast(
-                        brightness_limit=0.1, contrast_limit=0.1
-                    ),
-                ],
-                p=0.5,
-            ),
-            albumentations.OneOf(
-                [
-                    albumentations.OpticalDistortion(),
-                    albumentations.ElasticTransform(),
-                ],
-                p=0.25,
-            ),
-            albumentations.Cutout(
-                p=0.25,
-                num_holes=8,
-                max_h_size=int(hparams.sz * 0.1),
-                max_w_size=int(hparams.sz * 0.1),
-            ),
-            albumentations.ShiftScaleRotate(
-                shift_limit=0.0625, scale_limit=0.1, rotate_limit=10, p=0.8
-            ),
-            albumentations.RandomCrop(
-                int(input_image_sz * 0.9), int(input_image_sz * 0.9)
-            ),
-            albumentations.Resize(height=hparams.sz, width=hparams.sz),
-            albumentations.Normalize(
-                mean, std, max_pixel_value=255.0, always_apply=True
-            ),
-            transforms.ToTensorV2(),
-        ]
-    )
-    valid_augmentation = albumentations.Compose(
-        [
-            albumentations.CenterCrop(
-                int(input_image_sz * 0.9), int(input_image_sz * 0.9)
-            ),
-            albumentations.Resize(height=hparams.sz, width=hparams.sz),
-            albumentations.Normalize(
-                mean, std, max_pixel_value=255.0, always_apply=True
-            ),
-            transforms.ToTensorV2(),
-        ]
-    )
-    test_augmentation = albumentations.Compose(
-        [
-            albumentations.CenterCrop(int(256 * 0.9), int(256 * 0.9)),
-            albumentations.Resize(height=hparams.sz, width=hparams.sz),
-            albumentations.Normalize(
-                mean, std, max_pixel_value=255.0, always_apply=True
-            ),
-            transforms.ToTensorV2(),
-        ]
-    )
+    (
+        train_augmentation,
+        valid_augmentation,
+        test_augmentation,
+    ) = augmentations.augmentations_factory(hparams)
 
     # print config to terminal
     print("\nCurrent config:\n")
