@@ -20,7 +20,6 @@ class ImageClassifier(pl.LightningModule):
         self,
         in_channels: int,
         num_classes: int,
-        target_cols: List[str],
         **kwargs,
     ) -> None:
         super().__init__()

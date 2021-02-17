@@ -12,10 +12,10 @@ ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 
 class ImageClassificationDataset(Dataset):
-    def __init__(self, image_paths, targets, augmentation):
+    def __init__(self, image_paths, targets, augmentations):
         self.image_paths = image_paths
         self.targets = targets
-        self.augmentation = augmentation
+        self.augmentations = augmentations
         self.length = len(image_paths)
 
     def __len__(self):
@@ -24,8 +24,8 @@ class ImageClassificationDataset(Dataset):
     def __getitem__(self, item):
         image = np.array(Image.open(self.image_paths[item]))
 
-        if self.augmentation:
-            image = self.augmentation(image=image)["image"]
+        if self.augmentations:
+            image = self.augmentations(image=image)["image"]
 
         if self.targets is not None:
             return image, self.targets[item]
@@ -37,9 +37,9 @@ class ImageClassificationDataModule(pl.LightningDataModule):
     def __init__(
         self,
         batch_size,
-        train_image_path=None,
-        valid_image_path=None,
-        test_image_path=None,
+        train_image_paths=None,
+        valid_image_paths=None,
+        test_image_paths=None,
         train_targets=None,
         valid_targets=None,
         train_augmentations=None,
@@ -47,9 +47,9 @@ class ImageClassificationDataModule(pl.LightningDataModule):
         test_augmentations=None,
     ):
         super().__init__()
-        self.train_image_path = train_image_path
-        self.valid_image_path = valid_image_path
-        self.test_image_path = test_image_path
+        self.train_image_paths = train_image_paths
+        self.valid_image_paths = valid_image_paths
+        self.test_image_paths = test_image_paths
         self.train_targets = train_targets
         self.valid_targets = valid_targets
         self.train_augmentations = train_augmentations
@@ -65,21 +65,21 @@ class ImageClassificationDataModule(pl.LightningDataModule):
             self.train_ds = ImageClassificationDataset(
                 image_paths=self.train_image_paths,
                 targets=self.train_targets,
-                augmentation=self.train_augmentation,
+                augmentations=self.train_augmentations,
             )
 
         if self.valid_image_paths:
             self.valid_ds = ImageClassificationDataset(
                 image_paths=self.valid_image_paths,
                 targets=self.valid_targets,
-                augmentation=self.valid_augmentation,
+                augmentations=self.valid_augmentations,
             )
 
         if self.test_image_paths:
             self.test_ds = ImageClassificationDataset(
                 image_paths=self.test_image_paths,
                 targets=None,
-                augmentation=self.test_augmentation,
+                augmentations=self.test_augmentations,
             )
 
     def train_dataloader(self):
