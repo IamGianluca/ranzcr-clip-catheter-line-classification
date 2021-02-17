@@ -1,13 +1,7 @@
-from pathlib import Path
 from typing import List
 
-import pandas as pd
 import pytorch_lightning as pl
 import torch
-from torch.optim import lr_scheduler
-import torchvision.models as models
-from torch import nn
-from torch.optim.lr_scheduler import ReduceLROnPlateau
 from timm.models import create_model
 
 from .loss import loss_factory
@@ -20,7 +14,6 @@ class ImageClassifier(pl.LightningModule):
         self,
         in_channels: int,
         num_classes: int,
-        target_cols: List[str],
         **kwargs,
     ) -> None:
         super().__init__()
@@ -41,111 +34,108 @@ class ImageClassifier(pl.LightningModule):
 
     def configure_optimizers(self):
         config = dict()
+
+        # configure optimizer
         optimizer = optimizer_factory(
             params=self.parameters(), hparams=self.hparams
         )
         config["optimizer"] = optimizer
 
-        if True:
-            config["lr_scheduler"] = lr_scheduler_factory(
-                optimizer=optimizer,
-                hparams=self.hparams,
-                data_loader=self.train_dataloader(),
-            )
-            config["monitor"] = "valid_metric"
+        # configure lr scheduler
+        config["lr_scheduler"] = lr_scheduler_factory(
+            optimizer=optimizer,
+            hparams=self.hparams,
+            data_loader=self.train_dataloader(),
+        )
+        config["monitor"] = "valid_metric"
         return config
 
-    def loss_function(self, y_pred, y_true):
-        y_true = y_true.float()  # TODO: find a way to avoid this
+    def compute_loss(self, y_hat, y):
+        y = y.float()  # TODO: avoid this
 
         loss_fn = loss_factory(name=self.hparams.loss)
-        loss = loss_fn(y_pred, y_true.view(-1))
+        loss = loss_fn(y_hat.view(-1), y.view(-1))
         return loss
 
+    def compute_metric(self, y_hat, y):
+        metric_fn = metric_factory(name=self.hparams.metric)
+        try:  # if GPU metric
+            metric = metric_fn(y_true=y, y_score=y_hat)
+        except TypeError:  # if sklearn metric
+            try:
+                metric = metric_fn(
+                    y_true=y.detach().cpu().numpy(),
+                    y_score=y_hat.detach().cpu().numpy(),
+                )
+            except ValueError:
+                metric = 0.50
+        return metric
+
     def training_step(self, batch, batch_idx):
-        x_train, y_train = batch
-        y_pred = self(x_train)
-        train_loss = self.loss_function(
-            y_pred=y_pred.view(-1), y_true=y_train.view(-1)
-        )
+        x, y = batch
+        y_hat = self(x)
+        loss = self.compute_loss(y_hat=y_hat.view(-1), y=y.view(-1))
+
+        self.log("train_loss", loss, on_step=True, on_epoch=True)
         return {
-            "loss": train_loss,
-            "y_pred": y_pred,
-            "y_true": y_train,
+            "loss": loss,
+            "y_hat": y_hat,
+            "y": y,
         }
 
     def training_epoch_end(self, outputs: List):
-        train_loss = torch.cat(
-            [out["loss"].unsqueeze(dim=0) for out in outputs]
-        ).mean()
-        y_pred = torch.cat([out["y_pred"] for out in outputs], dim=0)
-        y_true = torch.cat([out["y_true"] for out in outputs], dim=0)
+        y_hat = torch.cat([out["y_hat"] for out in outputs], dim=0)
+        y = torch.cat([out["y"] for out in outputs], dim=0)
 
-        metric = metric_factory(name=self.hparams.metric)
-        try:
-            train_metric = metric(
-                y_true.detach().cpu().numpy(), y_pred.detach().cpu().numpy()
-            )
-        except TypeError:  # sklearn metric, requires dispatching to cpu
-            train_metric = metric(
-                y_true=y_pred.detach().cpu().numpy(),
-                y_pred=y_pred.detach().cpu().numpy(),
-            )
-        except ValueError:  # bs to small
-            train_metric = 0.0
-
-        self.log("train_loss", train_loss)
+        train_metric = self.compute_metric(y_hat=y_hat, y=y)
         self.log("train_metric", train_metric)
 
     def validation_step(self, batch, batch_idx):
-        x_valid, y_valid = batch
-        y_pred = self(x_valid)
-        valid_loss = self.loss_function(
-            y_pred=y_pred.view(-1), y_true=y_valid.view(-1)
-        )
-        return {"valid_loss": valid_loss, "y_pred": y_pred, "y_true": y_valid}
+        x, y = batch
+        y_hat = self(x)
+        loss = self.compute_loss(y_hat=y_hat, y=y)
+        self.log("valid_loss", loss, on_step=True, on_epoch=True)
+        return {"valid_loss": loss, "y_hat": y_hat, "y": y}
 
     def validation_epoch_end(self, outputs: List):
-        valid_loss = torch.cat(
-            [out["valid_loss"].unsqueeze(dim=0) for out in outputs]
-        ).mean()
-        y_pred = torch.cat([out["y_pred"] for out in outputs], dim=0)
-        y_true = torch.cat([out["y_true"] for out in outputs], dim=0)
+        y_hat = torch.cat([out["y_hat"] for out in outputs], dim=0)
+        y = torch.cat([out["y"] for out in outputs], dim=0)
 
-        metric = metric_factory(name=self.hparams.metric)
-        try:
-            valid_metric = metric(
-                y_true.detach().cpu().numpy(), y_pred.detach().cpu().numpy()
-            )
-        except TypeError:  # sklearn metric, requires dispatching to cpu
-            valid_metric = metric(
-                y_true=y_pred.detach().cpu().numpy(),
-                y_pred=y_pred.detach().cpu().numpy(),
-            )
-        except ValueError:  # bs to small
-            valid_metric = 0
-
-        if self.current_epoch >= 1:
-            try:
-                train_loss = self.trainer.callback_metrics["train_loss"]
-                train_metric = self.trainer.callback_metrics["train_metric"]
-                self.trainer.progress_bar_callback.main_progress_bar.write(
-                    f"Epoch {self.current_epoch} // train loss: {train_loss:.4f}, train metric: {train_metric:.4f}, valid loss: {valid_loss:.4f}, valid metric: {valid_metric:.4f}"
-                )
-                # TODO: check if there is a better way to access this value
-                if (
-                    self.best_valid_metric is None
-                    or valid_metric > self.best_valid_metric
-                ):
-                    self.best_valid_metric = valid_metric
-                if (
-                    self.best_train_metric is None
-                    or train_metric > self.best_train_metric
-                ):
-                    self.best_train_metric = train_metric
-            except (KeyError, AttributeError):
-                # these errors occurs when in "tuning" mode (find optimal lr)
-                pass
-
-        self.log("valid_loss", valid_loss)
+        valid_metric = self.compute_metric(y_hat=y_hat, y=y)
         self.log("valid_metric", valid_metric)
+
+        self.register_best_train_and_valid_metrics()
+        self.print_metrics_to_console()
+
+    def print_metrics_to_console(self):
+        try:
+            train_loss = self.trainer.callback_metrics["train_loss"]
+            train_metric = self.trainer.callback_metrics["train_metric"]
+            valid_loss = self.trainer.callback_metrics["valid_loss"]
+            valid_metric = self.trainer.callback_metrics["valid_metric"]
+
+            self.trainer.progress_bar_callback.main_progress_bar.write(
+                f"Epoch {self.current_epoch} // train loss: {train_loss:.4f}, train metric: {train_metric:.4f}, valid loss: {valid_loss:.4f}, valid metric: {valid_metric:.4f}"
+            )
+        except (KeyError, AttributeError):
+            # these errors occurs when in "tuning" mode (find optimal lr)
+            pass
+
+    def register_best_train_and_valid_metrics(self):
+        # TODO: check if there is a better way to access this value
+        try:
+            train_metric = self.trainer.callback_metrics["train_metric"]
+            valid_metric = self.trainer.callback_metrics["valid_metric"]
+            if (
+                self.best_valid_metric is None
+                or valid_metric > self.best_valid_metric
+            ):
+                self.best_valid_metric = valid_metric
+            if (
+                self.best_train_metric is None
+                or train_metric > self.best_train_metric
+            ):
+                self.best_train_metric = train_metric
+        except (KeyError, AttributeError):
+            # these errors occurs when in "tuning" mode (find optimal lr)
+            pass

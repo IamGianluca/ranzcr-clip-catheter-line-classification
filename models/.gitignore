@@ -28,3 +28,8 @@
 /arch=tf_efficientnet_b4_ns_sz=512_fold=2.ckpt
 /arch=tf_efficientnet_b4_ns_sz=512_fold=3.ckpt
 /arch=tf_efficientnet_b4_ns_sz=512_fold=4.ckpt
+/arch=resnest14d_sz=128_fold=0.ckpt
+/arch=resnest14d_sz=128_fold=1.ckpt
+/arch=resnest14d_sz=128_fold=2.ckpt
+/arch=resnest14d_sz=128_fold=3.ckpt
+/arch=resnest14d_sz=128_fold=4.ckpt

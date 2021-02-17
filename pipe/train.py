@@ -150,58 +150,8 @@ def run(hparams: argparse.Namespace):
 
     # train and validate model
     trainer.fit(model, dm)
-    valid_metric = model.best_valid_metric
-    train_metric = model.best_train_metric
 
-    # TODO: load best model, not just the latest
-    fname = f"arch={hparams.arch}_sz={hparams.sz}_fold={hparams.fold}.csv"
-    oof_predictions_fpath = constants.submissions_path / f"oof/{fname}"
-    create_submission(
-        hparams=hparams,
-        target_cols=target_cols,
-        dm=dm.val_dataloader,
-        model=model,
-        is_oof=True,
-        fpath=oof_predictions_fpath,
-    )
-
-    submission_fpath = constants.submissions_path / fname
-    create_submission(
-        hparams=hparams,
-        target_cols=target_cols,
-        dm=dm.test_dataloader,
-        model=model,
-        is_oof=False,
-        fpath=submission_fpath,
-    )
-
-    return train_metric, valid_metric
-
-
-def create_submission(hparams, target_cols, dm, model, is_oof, fpath):
-    model.freeze()
-    model.to("cuda")
-
-    preds = []
-    for batch in dm():
-        if is_oof:
-            x, _ = batch
-        else:
-            x = batch  # wedon't have targets for test data
-        batch_preds = model(x.to("cuda"))
-        preds.append(batch_preds.detach().cpu().numpy())
-    preds = np.vstack(preds)
-
-    if is_oof:
-        result = pd.read_csv(constants.train_folds_fpath)
-        result = result.loc[:, ["StudyInstanceUID"] + target_cols + ["kfold"]]
-        result = result[result.kfold == hparams.fold]
-        result[target_cols] = preds
-    else:
-        result = pd.read_csv(constants.sample_submission_fpath)
-        result[target_cols] = preds
-
-    result.to_csv(fpath, index=False)
+    return model.best_train_metric, model.best_valid_metric
 
 
 if __name__ == "__main__":
