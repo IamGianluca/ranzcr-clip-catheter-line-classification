@@ -1,0 +1,1 @@
+CUDA_VISIBLE_DEVICES=0 python pipe/train.py --train_data train_512 --test_data test_512 --fold -1 --epochs 15 --arch resnest14d --sz 256 --batch_size 128 --lr 1 --wd 0.00001 --sched onecycle --aug baseline --precision 32

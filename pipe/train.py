@@ -1,16 +1,12 @@
 import argparse
 
-import albumentations
-import albumentations.augmentations.transforms as A
-from albumentations.core.composition import OneOf
 import numpy as np
 import pandas as pd
 import pytorch_lightning as pl
-from albumentations.pytorch import transforms
 from pytorch_lightning import callbacks
 import augmentations
 
-from ml import classification, data
+from ml import learner, data
 from pipe import constants, augmentations
 
 
@@ -77,24 +73,10 @@ def parse_arguments(str2bool):
 
 
 def run(hparams: argparse.Namespace):
-    target_cols = [
-        "ETT - Abnormal",
-        "ETT - Borderline",
-        "ETT - Normal",
-        "NGT - Abnormal",
-        "NGT - Borderline",
-        "NGT - Incompletely Imaged",
-        "NGT - Normal",
-        "CVC - Abnormal",
-        "CVC - Borderline",
-        "CVC - Normal",
-        "Swan Ganz Catheter Present",
-    ]
-
     (
-        train_augmentation,
-        valid_augmentation,
-        test_augmentation,
+        train_augmentations,
+        valid_augmentations,
+        _,
     ) = augmentations.augmentations_factory(hparams)
 
     # print config to terminal
@@ -102,23 +84,36 @@ def run(hparams: argparse.Namespace):
     [print(f"{k}: {v}") for k, v in vars(hparams).items()]
     print("\n")
 
-    dm = data.LitDataModule(
-        data_path=constants.data_path,
+    df = pd.read_csv(constants.data_path / "train_folds.csv")
+    df_train = df[df.kfold != hparams.fold].reset_index()
+    df_valid = df[df.kfold == hparams.fold].reset_index()
+
+    train_targets = df_train.loc[:, constants.target_cols].values
+    valid_targets = df_valid.loc[:, constants.target_cols].values
+    train_image_paths = [
+        constants.train_img_path / f"{x}.jpg"
+        for x in df_train.StudyInstanceUID.values
+    ]
+    valid_image_paths = [
+        constants.train_img_path / f"{x}.jpg"
+        for x in df_valid.StudyInstanceUID.values
+    ]
+
+    dm = data.ImageClassificationDataModule(
         batch_size=hparams.batch_size,
-        fold=hparams.fold,
-        train_image_path=hparams.train_data,
-        valid_image_path=hparams.train_data,
-        test_image_path=hparams.test_data,
-        train_augmentation=train_augmentation,
-        valid_augmentation=valid_augmentation,
-        test_augmentation=test_augmentation,
+        train_image_paths=train_image_paths,
+        valid_image_paths=valid_image_paths,
+        train_targets=train_targets,
+        valid_targets=valid_targets,
+        train_augmentations=train_augmentations,
+        valid_augmentations=valid_augmentations,
     )
     dm.setup()
 
-    model = classification.ImageClassifier(
-        target_cols=target_cols,
+    model = learner.ImageClassifier(
+        target_cols=constants.target_cols,
         in_channels=1,
-        num_classes=len(target_cols),
+        num_classes=len(constants.target_cols),
         **vars(hparams),
     )
 
@@ -144,58 +139,7 @@ def run(hparams: argparse.Namespace):
 
     # train and validate model
     trainer.fit(model, dm)
-    valid_metric = model.best_valid_metric
-    train_metric = model.best_train_metric
-
-    # TODO: load best model, not just the latest
-    fname = f"arch={hparams.arch}_sz={hparams.sz}_fold={hparams.fold}.csv"
-    oof_predictions_fpath = constants.submissions_path / f"oof/{fname}"
-    create_submission(
-        hparams=hparams,
-        target_cols=target_cols,
-        dm=dm.val_dataloader,
-        model=model,
-        is_oof=True,
-        fpath=oof_predictions_fpath,
-    )
-
-    submission_fpath = constants.submissions_path / fname
-    create_submission(
-        hparams=hparams,
-        target_cols=target_cols,
-        dm=dm.test_dataloader,
-        model=model,
-        is_oof=False,
-        fpath=submission_fpath,
-    )
-
-    return train_metric, valid_metric
-
-
-def create_submission(hparams, target_cols, dm, model, is_oof, fpath):
-    model.freeze()
-    model.to("cuda")
-
-    preds = []
-    for batch in dm():
-        if is_oof:
-            x, _ = batch
-        else:
-            x = batch  # wedon't have targets for test data
-        batch_preds = model(x.to("cuda"))
-        preds.append(batch_preds.detach().cpu().numpy())
-    preds = np.vstack(preds)
-
-    if is_oof:
-        result = pd.read_csv(constants.train_folds_fpath)
-        result = result.loc[:, ["StudyInstanceUID"] + target_cols + ["kfold"]]
-        result = result[result.kfold == hparams.fold]
-        result[target_cols] = preds
-    else:
-        result = pd.read_csv(constants.sample_submission_fpath)
-        result[target_cols] = preds
-
-    result.to_csv(fpath, index=False)
+    return model.best_train_metric, model.best_valid_metric
 
 
 if __name__ == "__main__":

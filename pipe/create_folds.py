@@ -1,6 +1,6 @@
 import constants
 import pandas as pd
-from iterstrat.ml_stratifiers import MultilabelStratifiedKFold
+from sklearn.model_selection import GroupKFold
 
 from pipe import constants
 
@@ -15,8 +15,10 @@ def split():
     y = df.loc[:, constants.target_cols]
     groups = df.PatientID
 
-    kf = MultilabelStratifiedKFold(n_splits=5, shuffle=True, random_state=16)
-    for fold, (train_idx, val_idx) in enumerate(kf.split(X=x, y=y)):
+    kf = GroupKFold(n_splits=5)
+    for fold, (_, val_idx) in enumerate(
+        kf.split(X=x, y=y, groups=groups)
+    ):
         df.loc[val_idx, "kfold"] = fold
 
     print(df.groupby("kfold").mean())
