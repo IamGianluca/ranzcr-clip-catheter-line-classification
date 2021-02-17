@@ -1,16 +1,11 @@
 import argparse
 
-import albumentations
-import albumentations.augmentations.transforms as A
-from albumentations.core.composition import OneOf
 import numpy as np
 import pandas as pd
 import pytorch_lightning as pl
-from albumentations.pytorch import transforms
 from pytorch_lightning import callbacks
-import augmentations
 
-from ml import classification, data
+from ml import learner, data
 from pipe import constants, augmentations
 
 
@@ -91,31 +86,42 @@ def run(hparams: argparse.Namespace):
         "Swan Ganz Catheter Present",
     ]
 
-    (
-        train_augmentation,
-        valid_augmentation,
-        test_augmentation,
-    ) = augmentations.augmentations_factory(hparams)
+    train_aug, valid_aug, _ = augmentations.augmentations_factory(hparams)
 
     # print config to terminal
     print("\nCurrent config:\n")
     [print(f"{k}: {v}") for k, v in vars(hparams).items()]
     print("\n")
 
-    dm = data.LitDataModule(
-        data_path=constants.data_path,
+    # get image paths and targets
+    df = pd.read_csv(constants.data_path / "train_folds.csv")
+    target_cols = df.columns[1:-2]
+    df_train = df[df.kfold != hparams.fold].reset_index()
+    df_valid = df[df.kfold == hparams.fold].reset_index()
+
+    train_image_paths = [
+        hparams.train_data / f"{x}.jpg"
+        for x in df_train.StudyInstanceUID.values
+    ]
+    valid_image_paths = [
+        hparams.train_data / f"{x}.jpg"
+        for x in df_valid.StudyInstanceUID.values
+    ]
+    train_targets = df_train.loc[:, target_cols].values
+    valid_targets = df_valid.loc[:, target_cols].values
+
+    dm = data.ImageDataModule(
         batch_size=hparams.batch_size,
-        fold=hparams.fold,
-        train_image_path=hparams.train_data,
-        valid_image_path=hparams.train_data,
-        test_image_path=hparams.test_data,
-        train_augmentation=train_augmentation,
-        valid_augmentation=valid_augmentation,
-        test_augmentation=test_augmentation,
+        train_image_paths=train_image_paths,
+        valid_image_paths=valid_image_paths,
+        train_targets=train_targets,
+        valid_targets=valid_targets,
+        train_augmentations=train_aug,
+        valid_augmentations=valid_aug,
     )
     dm.setup()
 
-    model = classification.ImageClassifier(
+    model = learner.ImageClassifier(
         target_cols=target_cols,
         in_channels=1,
         num_classes=len(target_cols),

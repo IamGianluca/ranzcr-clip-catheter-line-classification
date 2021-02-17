@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import List
 
 import numpy as np
 import pandas as pd
@@ -12,10 +13,10 @@ ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 
 class ImageDataset(Dataset):
-    def __init__(self, image_paths, targets, augmentation):
+    def __init__(self, image_paths, targets, augmentations):
         self.image_paths = image_paths
         self.targets = targets
-        self.augmentation = augmentation
+        self.augmentations = augmentations
         self.length = len(image_paths)
 
     def __len__(self):
@@ -24,8 +25,8 @@ class ImageDataset(Dataset):
     def __getitem__(self, item):
         image = np.array(Image.open(self.image_paths[item]))
 
-        if self.augmentation:
-            image = self.augmentation(image=image)["image"]
+        if self.augmentations:
+            image = self.augmentations(image=image)["image"]
 
         if self.targets is not None:
             return image, self.targets[item]
@@ -33,69 +34,52 @@ class ImageDataset(Dataset):
             return image
 
 
-class LitDataModule(pl.LightningDataModule):
+class ImageDataModule(pl.LightningDataModule):
     def __init__(
         self,
-        data_path: Path,
-        batch_size,
-        fold: int,
-        train_image_path=None,
-        valid_image_path=None,
-        test_image_path=None,
-        train_augmentation=None,
-        valid_augmentation=None,
-        test_augmentation=None,
+        batch_size: int,
+        train_image_paths: List[Path] = None,
+        valid_image_paths: List[Path] = None,
+        test_image_paths: List[Path] = None,
+        train_targets: np.ndarray = None,
+        valid_targets: np.ndarray = None,
+        train_augmentations=None,
+        valid_augmentations=None,
+        test_augmentations=None,
     ):
         super().__init__()
-        self.data_path = data_path
-        self.fold = fold
-        self.train_image_path = train_image_path
-        self.valid_image_path = valid_image_path
-        self.test_image_path = test_image_path
-        self.train_augmentation = train_augmentation
-        self.valid_augmentation = valid_augmentation
-        self.test_augmentation = test_augmentation
+        self.train_image_paths = train_image_paths
+        self.valid_image_paths = valid_image_paths
+        self.test_image_paths = test_image_paths
+
+        self.train_targets = train_targets
+        self.valid_targets = valid_targets
+
+        self.train_augmentations = train_augmentations
+        self.valid_augmentations = valid_augmentations
+        self.test_augmentations = test_augmentations
+
         self.batch_size = batch_size
 
-    def prepare_data(self):
-        pass
-
     def setup(self):
-        df = pd.read_csv(self.data_path / "train_folds.csv")
-        target_cols = df.columns[1:-2]
-        df_train = df[df.kfold != self.fold]
-        df_valid = df[df.kfold == self.fold]
-
-        # TODO: we should pass the path(s) as an argument to the LitClassifier
-        # constructor. In this way, this class will be more generalizable
-        train_image_paths = [
-            self.train_image_path / f"{x}.jpg"
-            for x in df_train.StudyInstanceUID.values
-        ]
-        valid_image_paths = [
-            self.valid_image_path / f"{x}.jpg"
-            for x in df_valid.StudyInstanceUID.values
-        ]
-        test_image_paths = [
-            x for x in self.test_image_path.iterdir() if x.is_file()
-        ]
-
-        train_targets = df_train.loc[:, target_cols].values
-        valid_targets = df_valid.loc[:, target_cols].values
-
-        self.train_ds = ImageDataset(
-            train_image_paths,
-            targets=train_targets,
-            augmentation=self.train_augmentation,
-        )
-        self.valid_ds = ImageDataset(
-            valid_image_paths,
-            targets=valid_targets,
-            augmentation=self.valid_augmentation,
-        )
-        self.test_ds = ImageDataset(
-            test_image_paths, targets=None, augmentation=self.test_augmentation
-        )
+        if self.train_image_paths:
+            self.train_ds = ImageDataset(
+                image_paths=self.train_image_paths,
+                targets=self.train_targets,
+                augmentations=self.train_augmentations,
+            )
+        if self.valid_image_paths:
+            self.valid_ds = ImageDataset(
+                image_paths=self.valid_image_paths,
+                targets=self.valid_targets,
+                augmentations=self.valid_augmentations,
+            )
+        if self.test_image_paths:
+            self.test_ds = ImageDataset(
+                image_paths=self.test_image_paths,
+                targets=None,
+                augmentations=self.test_augmentations,
+            )
 
     def train_dataloader(self):
         return DataLoader(
