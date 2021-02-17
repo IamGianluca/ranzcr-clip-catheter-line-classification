@@ -73,12 +73,6 @@ def parse_arguments(str2bool):
 
 
 def run(hparams: argparse.Namespace):
-    (
-        train_augmentations,
-        valid_augmentations,
-        _,
-    ) = augmentations.augmentations_factory(hparams)
-
     # print config to terminal
     print("\nCurrent config:\n")
     [print(f"{k}: {v}") for k, v in vars(hparams).items()]
@@ -99,14 +93,16 @@ def run(hparams: argparse.Namespace):
         for x in df_valid.StudyInstanceUID.values
     ]
 
-    dm = data.ImageClassificationDataModule(
+    train_aug, valid_aug, _ = augmentations.augmentations_factory(hparams)
+
+    dm = data.ImageDataModule(
         batch_size=hparams.batch_size,
         train_image_paths=train_image_paths,
         valid_image_paths=valid_image_paths,
         train_targets=train_targets,
         valid_targets=valid_targets,
-        train_augmentations=train_augmentations,
-        valid_augmentations=valid_augmentations,
+        train_augmentations=train_aug,
+        valid_augmentations=valid_aug,
     )
     dm.setup()
 

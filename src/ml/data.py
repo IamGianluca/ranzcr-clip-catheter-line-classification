@@ -11,7 +11,7 @@ from torch.utils.data import DataLoader, Dataset
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 
-class ImageClassificationDataset(Dataset):
+class ImageDataset(Dataset):
     def __init__(self, image_paths, targets, augmentations):
         self.image_paths = image_paths
         self.targets = targets
@@ -33,7 +33,7 @@ class ImageClassificationDataset(Dataset):
             return image
 
 
-class ImageClassificationDataModule(pl.LightningDataModule):
+class ImageDataModule(pl.LightningDataModule):
     def __init__(
         self,
         batch_size,
@@ -50,11 +50,14 @@ class ImageClassificationDataModule(pl.LightningDataModule):
         self.train_image_paths = train_image_paths
         self.valid_image_paths = valid_image_paths
         self.test_image_paths = test_image_paths
+
         self.train_targets = train_targets
         self.valid_targets = valid_targets
+
         self.train_augmentations = train_augmentations
         self.valid_augmentations = valid_augmentations
         self.test_augmentations = test_augmentations
+
         self.batch_size = batch_size
 
     def prepare_data(self):
@@ -62,21 +65,21 @@ class ImageClassificationDataModule(pl.LightningDataModule):
 
     def setup(self):
         if self.train_image_paths:
-            self.train_ds = ImageClassificationDataset(
+            self.train_ds = ImageDataset(
                 image_paths=self.train_image_paths,
                 targets=self.train_targets,
                 augmentations=self.train_augmentations,
             )
 
         if self.valid_image_paths:
-            self.valid_ds = ImageClassificationDataset(
+            self.valid_ds = ImageDataset(
                 image_paths=self.valid_image_paths,
                 targets=self.valid_targets,
                 augmentations=self.valid_augmentations,
             )
 
         if self.test_image_paths:
-            self.test_ds = ImageClassificationDataset(
+            self.test_ds = ImageDataset(
                 image_paths=self.test_image_paths,
                 targets=None,
                 augmentations=self.test_augmentations,
