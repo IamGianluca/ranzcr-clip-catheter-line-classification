@@ -14,6 +14,7 @@ class ImageClassifier(pl.LightningModule):
         self,
         in_channels: int,
         num_classes: int,
+        pretrained=True,
         **kwargs,
     ) -> None:
         super().__init__()
@@ -23,7 +24,7 @@ class ImageClassifier(pl.LightningModule):
 
         self.model = create_model(
             model_name=self.hparams.arch,
-            pretrained=True,
+            pretrained=pretrained,
             num_classes=num_classes,
             in_chans=in_channels,
         )
