@@ -4,6 +4,7 @@ from typing import List
 import numpy as np
 import pandas as pd
 import pytorch_lightning as pl
+import torch
 from PIL import Image, ImageFile
 from torch.utils.data import DataLoader, Dataset
 
@@ -29,7 +30,7 @@ class ImageDataset(Dataset):
             image = self.augmentations(image=image)["image"]
 
         if self.targets is not None:
-            return image, self.targets[item]
+            return image, torch.tensor(self.targets[item]).float()
         else:
             return image
 

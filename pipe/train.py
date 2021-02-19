@@ -24,7 +24,7 @@ def str2path(v):
     return constants.data_path / v
 
 
-def parse_arguments(str2bool):
+def parse_arguments():
     parser = argparse.ArgumentParser()
 
     # trainer
@@ -94,7 +94,7 @@ def run(hparams: argparse.Namespace):
     print("\n")
 
     # get image paths and targets
-    df = pd.read_csv(constants.data_path / "train_folds.csv")
+    df = pd.read_csv(constants.train_folds_fpath)
     target_cols = df.columns[1:-2]
     df_train = df[df.kfold != hparams.fold].reset_index()
     df_valid = df[df.kfold == hparams.fold].reset_index()
@@ -112,19 +112,21 @@ def run(hparams: argparse.Namespace):
 
     dm = data.ImageDataModule(
         batch_size=hparams.batch_size,
+        # train
         train_image_paths=train_image_paths,
-        valid_image_paths=valid_image_paths,
         train_targets=train_targets,
-        valid_targets=valid_targets,
         train_augmentations=train_aug,
+        # valid
+        valid_image_paths=valid_image_paths,
+        valid_targets=valid_targets,
         valid_augmentations=valid_aug,
     )
     dm.setup()
 
     model = learner.ImageClassifier(
-        target_cols=target_cols,
         in_channels=1,
-        num_classes=len(target_cols),
+        num_classes=11,
+        pretrained=True,
         **vars(hparams),
     )
 
@@ -133,7 +135,6 @@ def run(hparams: argparse.Namespace):
         mode="max",
         dirpath=constants.models_path,
         filename=f"arch={hparams.arch}_sz={hparams.sz}_fold={hparams.fold}",
-        save_weights_only=True,
     )
 
     trainer = pl.Trainer(
@@ -155,7 +156,7 @@ def run(hparams: argparse.Namespace):
 
 
 if __name__ == "__main__":
-    hparams = parse_arguments(str2bool)
+    hparams = parse_arguments()
 
     if hparams.fold == -1:
         valid_scores = []
