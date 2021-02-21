@@ -130,7 +130,7 @@ stages:
     cmd:
       python pipe/train.py --train_data train_256 --test_data test_256 --fold -1
       --epochs 15 --arch resnest14d --sz 128 --batch_size 128 --lr 1 --wd 0.00001
-      --sched onecycle --aug baseline --precision 32 --opt sam
+      --label_smoothing 0.05 --sched onecycle --aug baseline --precision 32 --opt sam
     deps:
       - data/train_folds.csv
       - pipe/train.py

@@ -46,6 +46,12 @@ class ImageClassifier(pl.LightningModule):
         return [optimizer], [scheduler]
 
     def compute_loss(self, y_hat, y):
+        # apply label smoothing
+        y_ = (
+            y * (1 - self.hparams.label_smoothing)
+            + 0.5 * self.hparams.label_smoothing
+        )
+
         loss_fn = loss_factory(name=self.hparams.loss)
         loss = loss_fn(y_hat, y)
         return loss

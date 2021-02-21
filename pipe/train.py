@@ -66,6 +66,7 @@ def parse_arguments():
     # parser.add_argument("--decay_rate", "--dr", type=float)
 
     # miscellaneous
+    parser.add_argument("--label_smoothing", type=float, default=0.0)
     parser.add_argument("--verbose", type=bool)
 
     return parser.parse_args()
