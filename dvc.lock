@@ -398,31 +398,31 @@ train_efficientnet_b4_512:
     size: 1673483
 train_resnest14d_128:
   cmd: python pipe/train.py --train_data train_256 --test_data test_256 --fold -1
-    --epochs 15 --arch resnest14d --sz 128 --batch_size 128 --lr 1 --wd 0.00001 --sched
-    onecycle --aug baseline --precision 32 --opt sam
+    --epochs 15 --arch resnest14d --sz 128 --batch_size 128 --lr 1 --wd 0.00001 --label_smoothing
+    0.05 --sched onecycle --aug baseline --precision 32 --opt sam
   deps:
   - path: data/train_folds.csv
     md5: 7a364fa00309d9d50641ae5edcfabcd3
     size: 2978438
   - path: pipe/train.py
-    md5: 68bea132866f24d1ee9df63fe59abc22
-    size: 5508
+    md5: eff5e803fbb6738cc712757f68bd0990
+    size: 5578
   outs:
   - path: metrics/arch=resnest14d_sz=128.metric
-    md5: 537a8bf72b662dbe73244c02dfb005fa
+    md5: 159e17d940a3b86eacdee5cf3928374a
     size: 49
   - path: models/arch=resnest14d_sz=128_fold=0.ckpt
-    md5: 8f8e704e6d1eb4ba3159acea23f06e45
+    md5: 399813e5f561efa3b203ee4dada0c4c9
     size: 68863803
   - path: models/arch=resnest14d_sz=128_fold=1.ckpt
-    md5: a5594426e29fe09220f32f7f8445ee00
-    size: 68863805
+    md5: 6b13a1f78cf1f38c01e4927bd110d73d
+    size: 68863869
   - path: models/arch=resnest14d_sz=128_fold=2.ckpt
-    md5: 63cfabe13cc8dad9577f2eb6f683ae7a
-    size: 68863804
-  - path: models/arch=resnest14d_sz=128_fold=3.ckpt
-    md5: b54e0a73a31dbdca40ddaa24a2c8b712
+    md5: 9293c31e4547d8373068e7a8dd6a50ef
     size: 68863803
+  - path: models/arch=resnest14d_sz=128_fold=3.ckpt
+    md5: 22515f01f0974a301938c13468476698
+    size: 68863870
   - path: models/arch=resnest14d_sz=128_fold=4.ckpt
-    md5: 86434a4baa72badda3678b1638b069ff
-    size: 68863804
+    md5: 809171593ec46cdb2f4a2ab30906a75f
+    size: 68863803
