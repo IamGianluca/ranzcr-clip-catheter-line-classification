@@ -1,9 +1,4 @@
-/arch=resnet18_sz=128_fold=0.ckpt
 /arch=resnet34_sz=128_fold=0.ckpt
-/arch=resnet18_sz=128_fold=1.ckpt
-/arch=resnet18_sz=128_fold=2.ckpt
-/arch=resnet18_sz=128_fold=3.ckpt
-/arch=resnet18_sz=128_fold=4.ckpt
 /arch=resnet18_sz=256_fold=0.ckpt
 /arch=resnet18_sz=256_fold=1.ckpt
 /arch=resnet18_sz=256_fold=2.ckpt

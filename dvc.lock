@@ -158,65 +158,6 @@ train_modlel_02:
   - path: subs/oof/arch=resnet34_sz=128_fold=0.csv
     md5: 125c6c3ae07a99c6d53e0830d10d2e2e
     size: 986208
-train_resnet18_128:
-  cmd: python pipe/train.py --train_data train_256 --test_data test_256 --fold -1
-    --epochs 15 --arch resnet18 --sz 128 --batch_size 128 --lr 1 --sched onecycle
-  deps:
-  - path: data/train_folds.csv
-    md5: 7a364fa00309d9d50641ae5edcfabcd3
-    size: 2978438
-  - path: pipe/train.py
-    md5: e581ccaf9162ec502e9ec7892a49075d
-    size: 8627
-  outs:
-  - path: metrics/arch=resnet18_sz=128.metric
-    md5: 451949819eda3d5d8f989d778831db0c
-    size: 49
-  - path: models/arch=resnet18_sz=128_fold=0.ckpt
-    md5: a4271cefb7c25307236703f5cfd0b9ae
-    size: 44787577
-  - path: models/arch=resnet18_sz=128_fold=1.ckpt
-    md5: 56b6009b02e6c485e3b614acf85a4db5
-    size: 44787577
-  - path: models/arch=resnet18_sz=128_fold=2.ckpt
-    md5: 9d1403c3e2ddb245dcec7c4e5ae979fa
-    size: 44787577
-  - path: models/arch=resnet18_sz=128_fold=3.ckpt
-    md5: ab34a9fb74d358a456192bce17350e41
-    size: 44787577
-  - path: models/arch=resnet18_sz=128_fold=4.ckpt
-    md5: 8137b0d3c712b74e7aff8f6078419910
-    size: 44787577
-  - path: subs/arch=resnet18_sz=128_fold=0.csv
-    md5: 42be2be3e66bb9c0891c0cdaa0787448
-    size: 994072
-  - path: subs/arch=resnet18_sz=128_fold=1.csv
-    md5: 2667504c0031b0ef798412f3e32a6150
-    size: 993980
-  - path: subs/arch=resnet18_sz=128_fold=2.csv
-    md5: 0b6caa8e831e9aaa34c85c3130a76fc0
-    size: 993980
-  - path: subs/arch=resnet18_sz=128_fold=3.csv
-    md5: 74615b4c08eb1c4c6e80023c145a9774
-    size: 992800
-  - path: subs/arch=resnet18_sz=128_fold=4.csv
-    md5: 2982dc277d90869bc587cce2d08e52d0
-    size: 994335
-  - path: subs/oof/arch=resnet18_sz=128_fold=0.csv
-    md5: e93e676fabc05b811f436af6a6d25a32
-    size: 1681703
-  - path: subs/oof/arch=resnet18_sz=128_fold=1.csv
-    md5: 888da85ee320b85b78911c36ced9df5f
-    size: 1679020
-  - path: subs/oof/arch=resnet18_sz=128_fold=2.csv
-    md5: 12e7a16dbe1e3752bce94bd1bfef26d7
-    size: 1681832
-  - path: subs/oof/arch=resnet18_sz=128_fold=3.csv
-    md5: 00930d9a5a358df6100a1266272aacac
-    size: 1681025
-  - path: subs/oof/arch=resnet18_sz=128_fold=4.csv
-    md5: 7d596cde49752a098c4631e07acac106
-    size: 1680667
 train_resnet18_256:
   cmd: python pipe/train.py --train_data train_256 --test_data test_256 --fold -1
     --epochs 15 --arch resnet18 --sz 256 --batch_size 128 --lr 1 --sched onecycle
@@ -458,30 +399,30 @@ train_efficientnet_b4_512:
 train_resnest14d_128:
   cmd: python pipe/train.py --train_data train_256 --test_data test_256 --fold -1
     --epochs 15 --arch resnest14d --sz 128 --batch_size 128 --lr 1 --wd 0.00001 --sched
-    onecycle --aug baseline --precision 32
+    onecycle --aug baseline --precision 32 --opt sam
   deps:
   - path: data/train_folds.csv
     md5: 7a364fa00309d9d50641ae5edcfabcd3
     size: 2978438
   - path: pipe/train.py
-    md5: e29983b7f2e46f7676bda99f2e23d7e3
-    size: 5558
+    md5: 68bea132866f24d1ee9df63fe59abc22
+    size: 5508
   outs:
   - path: metrics/arch=resnest14d_sz=128.metric
-    md5: 4dac2a12411e1dfe901c1bda455770ac
+    md5: 537a8bf72b662dbe73244c02dfb005fa
     size: 49
   - path: models/arch=resnest14d_sz=128_fold=0.ckpt
-    md5: b725166e7c53d3b2d52ffaaeaaf129da
-    size: 34485767
+    md5: 8f8e704e6d1eb4ba3159acea23f06e45
+    size: 68863803
   - path: models/arch=resnest14d_sz=128_fold=1.ckpt
-    md5: ec82f86106eb8339084498a803f1b602
-    size: 34485768
+    md5: a5594426e29fe09220f32f7f8445ee00
+    size: 68863805
   - path: models/arch=resnest14d_sz=128_fold=2.ckpt
-    md5: 02e6a19de78e97f169e96c66fc52ac5e
-    size: 34485767
+    md5: 63cfabe13cc8dad9577f2eb6f683ae7a
+    size: 68863804
   - path: models/arch=resnest14d_sz=128_fold=3.ckpt
-    md5: 610f0d7290ab3ca139f82afd3cf0905b
-    size: 34485767
+    md5: b54e0a73a31dbdca40ddaa24a2c8b712
+    size: 68863803
   - path: models/arch=resnest14d_sz=128_fold=4.ckpt
-    md5: 21de258291f4b83b9d6e40b3ce871af5
-    size: 34485767
+    md5: 86434a4baa72badda3678b1638b069ff
+    size: 68863804

@@ -14,7 +14,7 @@ class ImageClassifier(pl.LightningModule):
         self,
         in_channels: int,
         num_classes: int,
-        pretrained=True,
+        pretrained=False,
         **kwargs,
     ) -> None:
         super().__init__()
@@ -30,32 +30,24 @@ class ImageClassifier(pl.LightningModule):
         )
 
     def forward(self, x):
-        x = self.model(torch.as_tensor(data=x))
+        x = self.model(x)
         return x
 
     def configure_optimizers(self):
-        config = dict()
-
-        # configure optimizer
         optimizer = optimizer_factory(
             params=self.parameters(), hparams=self.hparams
         )
-        config["optimizer"] = optimizer
 
-        # configure lr scheduler
-        config["lr_scheduler"] = lr_scheduler_factory(
+        scheduler = lr_scheduler_factory(
             optimizer=optimizer,
             hparams=self.hparams,
             data_loader=self.train_dataloader(),
         )
-        config["monitor"] = "valid_metric"
-        return config
+        return [optimizer], [scheduler]
 
     def compute_loss(self, y_hat, y):
-        y = y.float()  # TODO: avoid this
-
         loss_fn = loss_factory(name=self.hparams.loss)
-        loss = loss_fn(y_hat.view(-1), y.view(-1))
+        loss = loss_fn(y_hat, y)
         return loss
 
     def compute_metric(self, y_hat, y):
@@ -72,11 +64,14 @@ class ImageClassifier(pl.LightningModule):
                 metric = 0.50
         return metric
 
-    def training_step(self, batch, batch_idx):
+    def step(self, batch):
         x, y = batch
-        y_hat = self(x)
-        loss = self.compute_loss(y_hat=y_hat.view(-1), y=y.view(-1))
+        y_hat = self.model(x)
+        loss = self.compute_loss(y_hat=y_hat, y=y)
+        return loss, y, y_hat.sigmoid()
 
+    def training_step(self, batch, batch_idx):
+        loss, y, y_hat = self.step(batch)
         self.log("train_loss", loss, on_step=True, on_epoch=True)
         return {
             "loss": loss,
@@ -92,9 +87,7 @@ class ImageClassifier(pl.LightningModule):
         self.log("train_metric", train_metric)
 
     def validation_step(self, batch, batch_idx):
-        x, y = batch
-        y_hat = self(x)
-        loss = self.compute_loss(y_hat=y_hat, y=y)
+        loss, y, y_hat = self.step(batch)
         self.log("valid_loss", loss, on_step=True, on_epoch=True)
         return {"valid_loss": loss, "y_hat": y_hat, "y": y}
 
@@ -107,6 +100,29 @@ class ImageClassifier(pl.LightningModule):
 
         self.register_best_train_and_valid_metrics()
         self.print_metrics_to_console()
+
+    def predict(self, dl):
+        self.eval()
+        self.to("cuda")
+
+        for batch in dl():
+            x = batch.float()
+            x = x.to("cuda")
+            with torch.no_grad():
+                y_hat = self.model(x)
+                yield y_hat.detach().cpu().numpy()
+
+    def predict_proba(self, dl):
+        self.eval()
+        self.to("cuda")
+
+        for batch in dl():
+            x = batch.float()
+            x = x.to("cuda")
+            with torch.no_grad():
+                y_hat = self.model(x)
+                outs = y_hat.sigmoid()
+                yield outs.detach().cpu().numpy()
 
     def print_metrics_to_console(self):
         try:

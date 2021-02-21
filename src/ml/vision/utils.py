@@ -40,14 +40,14 @@ def resize_image_and_pad_if_needed(img: Image, sz: int):
     return resized_img
 
 
-def plot_a_batch(dl: DataLoader):
+def plot_batches(dl: DataLoader, n_batches: int = 1):
     for batch_number, batch in enumerate(dl):
         plt.figure(figsize=(20, 10))
         show_images_in_batch(batch=batch, verbose=False)
         plt.axis("off")
         plt.ioff()
         plt.show()
-        if batch_number == 2:
+        if batch_number == (n_batches - 1):
             break
 
 

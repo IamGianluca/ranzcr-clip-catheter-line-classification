@@ -5,8 +5,6 @@ from torch import optim
 from torch.optim import lr_scheduler
 from torch.optim._multi_tensor import SGD
 
-__all__ = ["SAMSGD"]
-
 
 def optimizer_factory(params, hparams):
     if hparams.opt == "adam":
