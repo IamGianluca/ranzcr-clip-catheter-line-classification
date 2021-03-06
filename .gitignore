@@ -4,3 +4,7 @@ __pycache__
 .nvimlog
 *.egg-info/
 lightning_logs/
+run_1080.sh
+run_3090.sh
+ml-runs
+mlruns

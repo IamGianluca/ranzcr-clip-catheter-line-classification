@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 import pytorch_lightning as pl
 from pytorch_lightning import callbacks
+from pytorch_lightning.loggers import MLFlowLogger
 
 from ml import learner, data
 from pipe import constants, augmentations
@@ -31,6 +32,7 @@ def parse_arguments():
     parser.add_argument("--precision", type=int, default=16)
     parser.add_argument("--metric", type=str, default="multilabel_auc_macro")
     parser.add_argument("--epochs", type=int, default=1_000)
+    parser.add_argument("--accumulate_grad_batches", type=int, default=1)
     parser.add_argument(
         "--fold",
         type=int,
@@ -137,14 +139,19 @@ def run(hparams: argparse.Namespace):
         dirpath=constants.models_path,
         filename=f"arch={hparams.arch}_sz={hparams.sz}_fold={hparams.fold}",
     )
+    logger = MLFlowLogger(
+        experiment_name="default", tracking_uri="file:./mlruns"
+    )
 
     trainer = pl.Trainer(
         gpus=1,
         precision=hparams.precision,
         auto_lr_find=hparams.auto_lr,
+        accumulate_grad_batches=hparams.accumulate_grad_batches,
         auto_scale_batch_size=hparams.auto_batch_size,
         max_epochs=hparams.epochs,
         callbacks=[checkpoint_callback],
+        logger=logger,
     )
     if hparams.auto_lr or hparams.auto_batch_size:
         print("\nTuning...")
