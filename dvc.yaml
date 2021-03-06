@@ -143,3 +143,54 @@ stages:
     metrics:
       - metrics/arch=resnest14d_sz=128.metric:
           cache: false
+  train_resnest50d_512:
+    cmd:
+      python pipe/train.py --train_data train_1024 --test_data test_1024 --fold -1
+      --epochs 10 --arch resnest50d --sz 512 --batch_size 32 --lr .1 --wd 0.00001
+      --label_smoothing 0.05 --sched onecycle --aug baseline --precision 32 --opt sam
+    deps:
+      - data/train_folds.csv
+      - pipe/train.py
+    outs:
+      - models/arch=resnest50d_sz=512_fold=0.ckpt
+      - models/arch=resnest50d_sz=512_fold=1.ckpt
+      - models/arch=resnest50d_sz=512_fold=2.ckpt
+      - models/arch=resnest50d_sz=512_fold=3.ckpt
+      - models/arch=resnest50d_sz=512_fold=4.ckpt
+    metrics:
+      - metrics/arch=resnest50d_sz=512.metric:
+          cache: false
+  train_resnest101e_512:
+    cmd:
+      python pipe/train.py --train_data train_1024 --test_data test_1024 --fold -1
+      --epochs 10 --arch resnest101e --sz 512 --batch_size 16 --lr .1 --wd 0.00001
+      --label_smoothing 0.05 --sched onecycle --aug baseline --precision 32 --opt sam
+    deps:
+      - data/train_folds.csv
+      - pipe/train.py
+    outs:
+      - models/arch=resnest101e_sz=512_fold=0.ckpt
+      - models/arch=resnest101e_sz=512_fold=1.ckpt
+      - models/arch=resnest101e_sz=512_fold=2.ckpt
+      - models/arch=resnest101e_sz=512_fold=3.ckpt
+      - models/arch=resnest101e_sz=512_fold=4.ckpt
+    metrics:
+      - metrics/arch=resnest101e_sz=512.metric:
+          cache: false
+  train_resnest200e_512:
+    cmd:
+      python pipe/train.py --train_data train_1024 --test_data test_1024 --fold -1
+      --epochs 10 --arch resnest200e --sz 512 --batch_size 8 --lr .1 --wd 0.00001
+      --label_smoothing 0.05 --sched onecycle --aug baseline --precision 32 --opt sam
+    deps:
+      - data/train_folds.csv
+      - pipe/train.py
+    outs:
+      - models/arch=resnest200e_sz=512_fold=0.ckpt
+      - models/arch=resnest200e_sz=512_fold=1.ckpt
+      - models/arch=resnest200e_sz=512_fold=2.ckpt
+      - models/arch=resnest200e_sz=512_fold=3.ckpt
+      - models/arch=resnest200e_sz=512_fold=4.ckpt
+    metrics:
+      - metrics/arch=resnest200e_sz=512.metric:
+          cache: false
