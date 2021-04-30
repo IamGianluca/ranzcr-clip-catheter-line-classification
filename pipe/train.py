@@ -160,7 +160,10 @@ def run(hparams: argparse.Namespace):
     # train and validate model
     trainer.fit(model, dm)
 
-    return model.best_train_metric, model.best_valid_metric
+    return (
+        model.best_train_metric.detach().cpu().numpy(),
+        model.best_valid_metric.detach().cpu().numpy(),
+    )
 
 
 if __name__ == "__main__":
