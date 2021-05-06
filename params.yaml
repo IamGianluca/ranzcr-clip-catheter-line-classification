@@ -1,17 +1,23 @@
 create_folds:
   folds: 5
 
-train_resnet18_128:
-  epochs: 20
-  arch: "resnet18"
+train_resnest14d_128:
+  train_data: "train_256"
+  test_data: "test_256"
+  fold: -1
+  epochs: 15
+  arch: "resnest14d"
   metric: "multilabel_auc_macro"
-  opt: "adam"
+  opt: "sam"
+  sched: "onecycle"
+  aug: "baseline"
   loss: "bce_with_logits"
-  precision: 16
+  precision: 32
   sz: 128
-  bs: 1024
-  lr: 0.02
-  wd: 0.02
+  bs: 128
+  lr: 1
+  wd: 0.00001
+  smoothing: 0.05
   mom: 0.9
 
 train_resnet34_128:
