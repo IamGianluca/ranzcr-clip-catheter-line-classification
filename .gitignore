@@ -7,5 +7,4 @@ __pycache__
 lightning_logs/
 run_1080.sh
 run_3090.sh
-ml-runs
-mlruns
+tb_logs/
