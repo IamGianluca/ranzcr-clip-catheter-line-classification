@@ -1,148 +1,107 @@
 stages:
   download_data:
-    cmd:
-      kaggle competitions download -c ranzcr-clip-catheter-line-classification
+    cmd: kaggle competitions download -c ranzcr-clip-catheter-line-classification
       -p data/
     outs:
-      - data/ranzcr-clip-catheter-line-classification.zip
+    - data/ranzcr-clip-catheter-line-classification.zip
     frozen: true
   unzip_train_img:
     cmd: unzip data/ranzcr-clip-catheter-line-classification.zip 'train/*' -d 'data/'
     deps:
-      - data/ranzcr-clip-catheter-line-classification.zip
+    - data/ranzcr-clip-catheter-line-classification.zip
     outs:
-      - data/train/
+    - data/train/
     frozen: true
   unzip_test_img:
     cmd: unzip data/ranzcr-clip-catheter-line-classification.zip 'test/*' -d 'data/'
     deps:
-      - data/ranzcr-clip-catheter-line-classification.zip
+    - data/ranzcr-clip-catheter-line-classification.zip
     outs:
-      - data/test/
+    - data/test/
     frozen: true
   unzip_train_labels:
     cmd: unzip data/ranzcr-clip-catheter-line-classification.zip 'train.csv' -d 'data/'
     deps:
-      - data/ranzcr-clip-catheter-line-classification.zip
+    - data/ranzcr-clip-catheter-line-classification.zip
     outs:
-      - data/train.csv
+    - data/train.csv
     frozen: true
   unzip_train_annotations:
-    cmd:
-      unzip data/ranzcr-clip-catheter-line-classification.zip 'train_annotations.csv'
+    cmd: unzip data/ranzcr-clip-catheter-line-classification.zip 'train_annotations.csv'
       -d 'data/'
     deps:
-      - data/ranzcr-clip-catheter-line-classification.zip
+    - data/ranzcr-clip-catheter-line-classification.zip
     outs:
-      - data/train_annotations.csv
+    - data/train_annotations.csv
     frozen: true
   unzip_sample_submission:
-    cmd:
-      unzip data/ranzcr-clip-catheter-line-classification.zip 'sample_submission.csv'
+    cmd: unzip data/ranzcr-clip-catheter-line-classification.zip 'sample_submission.csv'
       -d 'data/'
     deps:
-      - data/ranzcr-clip-catheter-line-classification.zip
+    - data/ranzcr-clip-catheter-line-classification.zip
     outs:
-      - data/sample_submission.csv
+    - data/sample_submission.csv
     frozen: true
   resize_images:
     cmd: python pipe/resize_images.py
     deps:
-      - data/train/
-      - data/test/
+    - data/train/
+    - data/test/
     outs:
-      - data/train_128/
-      - data/train_192/
-      - data/train_256/
-      - data/train_384/
-      - data/train_512/
-      - data/train_768/
-      - data/train_1024/
-      - data/test_128/
-      - data/test_192/
-      - data/test_256/
-      - data/test_384/
-      - data/test_512/
-      - data/test_768/
-      - data/test_1024/
+    - data/train_128/
+    - data/train_192/
+    - data/train_256/
+    - data/train_384/
+    - data/train_512/
+    - data/train_768/
+    - data/train_1024/
+    - data/test_128/
+    - data/test_192/
+    - data/test_256/
+    - data/test_384/
+    - data/test_512/
+    - data/test_768/
+    - data/test_1024/
   create_folds:
     cmd: python pipe/create_folds.py
     deps:
-      - data/train.csv
-      - pipe/create_folds.py
+    - data/train.csv
+    - pipe/create_folds.py
     outs:
-      - data/train_folds.csv
+    - data/train_folds.csv
   train_resnest14d_128:
-    cmd:
-      python pipe/train.py --train_data train_256 --test_data test_256 --fold -1
+    cmd: python pipe/train.py --train_data train_256 --test_data test_256 --fold -1
       --epochs 15 --arch resnest14d --sz 128 --batch_size 128 --lr 1 --wd 0.00001
       --label_smoothing 0.05 --sched onecycle --aug baseline --precision 32 --opt
       sam
     deps:
-      - data/train_folds.csv
-      - data/train_128/
-      - data/train_256/
-      - pipe/train.py
+    - data/train_folds.csv
+    - data/train_128/
+    - data/train_256/
+    - pipe/train.py
     outs:
-      - models/arch=resnest14d_sz=128_fold=0.ckpt
-      - models/arch=resnest14d_sz=128_fold=1.ckpt
-      - models/arch=resnest14d_sz=128_fold=2.ckpt
-      - models/arch=resnest14d_sz=128_fold=3.ckpt
-      - models/arch=resnest14d_sz=128_fold=4.ckpt
+    - models/arch=resnest14d_sz=128_fold=0.ckpt
+    - models/arch=resnest14d_sz=128_fold=1.ckpt
+    - models/arch=resnest14d_sz=128_fold=2.ckpt
+    - models/arch=resnest14d_sz=128_fold=3.ckpt
+    - models/arch=resnest14d_sz=128_fold=4.ckpt
     metrics:
-      - metrics/arch=resnest14d_sz=128.metric:
-          cache: false
-  train_resnest50d_512:
-    cmd:
-      python pipe/train.py --train_data train_1024 --test_data test_1024 --fold
-      -1 --epochs 10 --arch resnest50d --sz 512 --batch_size 32 --lr .1 --wd 0.00001
-      --label_smoothing 0.05 --sched onecycle --aug baseline --precision 32 --opt
-      sam
-    deps:
-      - data/train_folds.csv
-      - pipe/train.py
-    outs:
-      - models/arch=resnest50d_sz=512_fold=0.ckpt
-      - models/arch=resnest50d_sz=512_fold=1.ckpt
-      - models/arch=resnest50d_sz=512_fold=2.ckpt
-      - models/arch=resnest50d_sz=512_fold=3.ckpt
-      - models/arch=resnest50d_sz=512_fold=4.ckpt
-    metrics:
-      - metrics/arch=resnest50d_sz=512.metric:
-          cache: false
-  train_resnest101e_512:
-    cmd:
-      python pipe/train.py --train_data train_1024 --test_data test_1024 --fold
-      -1 --epochs 10 --arch resnest101e --sz 512 --batch_size 16 --lr .1 --wd 0.00001
-      --label_smoothing 0.05 --sched onecycle --aug baseline --precision 32 --opt
-      sam
-    deps:
-      - data/train_folds.csv
-      - pipe/train.py
-    outs:
-      - models/arch=resnest101e_sz=512_fold=0.ckpt
-      - models/arch=resnest101e_sz=512_fold=1.ckpt
-      - models/arch=resnest101e_sz=512_fold=2.ckpt
-      - models/arch=resnest101e_sz=512_fold=3.ckpt
-      - models/arch=resnest101e_sz=512_fold=4.ckpt
-    metrics:
-      - metrics/arch=resnest101e_sz=512.metric:
-          cache: false
+    - metrics/arch=resnest14d_sz=128.metric:
+        cache: false
   train_resnest200e_512:
-    cmd:
-      python pipe/train.py --train_data train_1024 --test_data test_1024 --fold
+    cmd: python pipe/train.py --train_data train_1024 --test_data test_1024 --fold
       -1 --epochs 10 --arch resnest200e --sz 512 --batch_size 8 --lr .1 --wd 0.00001
       --label_smoothing 0.05 --sched onecycle --aug baseline --precision 32 --opt
       sam
     deps:
-      - data/train_folds.csv
-      - pipe/train.py
+    - data/train_folds.csv
+    - pipe/train.py
     outs:
-      - models/arch=resnest200e_sz=512_fold=0.ckpt
-      - models/arch=resnest200e_sz=512_fold=1.ckpt
-      - models/arch=resnest200e_sz=512_fold=2.ckpt
-      - models/arch=resnest200e_sz=512_fold=3.ckpt
-      - models/arch=resnest200e_sz=512_fold=4.ckpt
+    - models/arch=resnest200e_sz=512_fold=0.ckpt
+    - models/arch=resnest200e_sz=512_fold=1.ckpt
+    - models/arch=resnest200e_sz=512_fold=2.ckpt
+    - models/arch=resnest200e_sz=512_fold=3.ckpt
+    - models/arch=resnest200e_sz=512_fold=4.ckpt
     metrics:
-      - metrics/arch=resnest200e_sz=512.metric:
-          cache: false
+    - metrics/arch=resnest200e_sz=512.metric:
+        cache: false

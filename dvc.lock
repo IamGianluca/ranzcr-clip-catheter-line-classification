@@ -417,8 +417,8 @@ stages:
       md5: 7f4f0d6630400e2b1218d530fcb99a63
       size: 2978438
     - path: pipe/train.py
-      md5: 7d3d93e16cf7510d2997f68a1856917e
-      size: 5959
+      md5: 9b71fb58eccf4b3ebeb5a9ddb6897b13
+      size: 5926
     outs:
     - path: metrics/arch=resnest14d_sz=128.metric
       md5: 64996527a23e0be4ae24d41cea0d4139
@@ -438,37 +438,6 @@ stages:
     - path: models/arch=resnest14d_sz=128_fold=4.ckpt
       md5: 24501a33be1377b3a624cb5322ae4816
       size: 68863867
-  train_resnest101e_512:
-    cmd: python pipe/train.py --train_data train_1024 --test_data test_1024 --fold
-      -1 --epochs 10 --arch resnest101e --sz 512 --batch_size 16 --lr .1 --wd 0.00001
-      --label_smoothing 0.05 --sched onecycle --aug baseline --precision 32 --opt
-      sam
-    deps:
-    - path: data/train_folds.csv
-      md5: 7a364fa00309d9d50641ae5edcfabcd3
-      size: 2978438
-    - path: pipe/train.py
-      md5: 7b347936343e1135b4cb5faaf9e1153a
-      size: 5888
-    outs:
-    - path: metrics/arch=resnest101e_sz=512.metric
-      md5: 7da3b3c004a251ec0fcb1d1dee001381
-      size: 50
-    - path: models/arch=resnest101e_sz=512_fold=0.ckpt
-      md5: bcec379952017b9f84af5ff871fefaa9
-      size: 371087053
-    - path: models/arch=resnest101e_sz=512_fold=1.ckpt
-      md5: ed6851233b5246341f380a8b8811c21c
-      size: 371087054
-    - path: models/arch=resnest101e_sz=512_fold=2.ckpt
-      md5: 25c845fcdb94fc45e7da3f349a04b489
-      size: 371087053
-    - path: models/arch=resnest101e_sz=512_fold=3.ckpt
-      md5: e6805294f7833e4bd3ea4fc8beb938b4
-      size: 371087053
-    - path: models/arch=resnest101e_sz=512_fold=4.ckpt
-      md5: 3ec2bd018dd0aa3ee2a4b88932128133
-      size: 371087053
   train_resnest200e_512:
     cmd: python pipe/train.py --train_data train_1024 --test_data test_1024 --fold
       -1 --epochs 10 --arch resnest200e --sz 512 --batch_size 8 --lr .1 --wd 0.00001
@@ -479,8 +448,8 @@ stages:
       md5: 7f4f0d6630400e2b1218d530fcb99a63
       size: 2978438
     - path: pipe/train.py
-      md5: 7d3d93e16cf7510d2997f68a1856917e
-      size: 5959
+      md5: 9b71fb58eccf4b3ebeb5a9ddb6897b13
+      size: 5926
     outs:
     - path: metrics/arch=resnest200e_sz=512.metric
       md5: 7434334635819f0a43856bc3a6e9a282
@@ -500,34 +469,3 @@ stages:
     - path: models/arch=resnest200e_sz=512_fold=4.ckpt
       md5: e4b37cdfefffbb6d47e9eba16b44db14
       size: 547410695
-  train_resnest50d_512:
-    cmd: python pipe/train.py --train_data train_1024 --test_data test_1024 --fold
-      -1 --epochs 10 --arch resnest50d --sz 512 --batch_size 32 --lr .1 --wd 0.00001
-      --label_smoothing 0.05 --sched onecycle --aug baseline --precision 32 --opt
-      sam
-    deps:
-    - path: data/train_folds.csv
-      md5: 7a364fa00309d9d50641ae5edcfabcd3
-      size: 2978438
-    - path: pipe/train.py
-      md5: 7b347936343e1135b4cb5faaf9e1153a
-      size: 5888
-    outs:
-    - path: metrics/arch=resnest50d_sz=512.metric
-      md5: 8a7ffe01e5ceaa8dfc315d481fe8287e
-      size: 50
-    - path: models/arch=resnest50d_sz=512_fold=0.ckpt
-      md5: 026c0a1d823cdd47fedcb714faf3d322
-      size: 204207475
-    - path: models/arch=resnest50d_sz=512_fold=1.ckpt
-      md5: 6c1c4e01bd959814f902430c03a3131a
-      size: 204207476
-    - path: models/arch=resnest50d_sz=512_fold=2.ckpt
-      md5: 934c4bcbf3f80308e4e1bff47490e0b3
-      size: 204207475
-    - path: models/arch=resnest50d_sz=512_fold=3.ckpt
-      md5: 0e1ee21057f39e84ab49c4431769f963
-      size: 204207475
-    - path: models/arch=resnest50d_sz=512_fold=4.ckpt
-      md5: c279403b0e673563bb04e9c9603eb8a1
-      size: 204207476

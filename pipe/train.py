@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import pytorch_lightning as pl
 from pytorch_lightning import callbacks
-from pytorch_lightning.loggers import MLFlowLogger
+from pytorch_lightning.loggers import TensorBoardLogger
 
 from ml import learner, data
 from pipe import constants, augmentations
@@ -139,9 +139,7 @@ def run(hparams: argparse.Namespace):
         dirpath=constants.models_path,
         filename=f"arch={hparams.arch}_sz={hparams.sz}_fold={hparams.fold}",
     )
-    logger = MLFlowLogger(
-        experiment_name="default", tracking_uri="file:./mlruns"
-    )
+    logger = TensorBoardLogger("tb_logs", name="my_model")
 
     trainer = pl.Trainer(
         gpus=1,
