@@ -14,7 +14,7 @@ target_cols = [
     "Swan Ganz Catheter Present",
 ]
 
-path = Path("/home/gianluca/git/kaggle/ranzcr/")
+path = Path("/workspace")
 
 data_path = path / "data"
 train_image_path = data_path / "train"
