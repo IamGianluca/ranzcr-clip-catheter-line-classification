@@ -7,7 +7,7 @@ from pytorch_lightning import callbacks
 from pytorch_lightning.loggers import TensorBoardLogger
 
 from ml import learner, data
-from pipe import constants, augmentations
+import constants, augmentations
 
 
 def str2bool(v):
